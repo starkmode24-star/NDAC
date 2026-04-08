@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Bell, Search } from "lucide-react";
+import { Menu, X, Bell, Search, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const navItems = ["News", "Highlights", "Standings", "Schedule", "Leagues"];
+const navItems = ["Tournaments", "Clubs", "Players", "Gallery", "Reports"];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -20,12 +21,12 @@ const Navbar = () => {
       }`}
     >
       <div className="container flex items-center justify-between h-16">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded bg-primary flex items-center justify-center">
-            <span className="font-display font-bold text-primary-foreground text-sm">Z</span>
+        <div className="flex items-center gap-2 cursor-pointer">
+          <div className="w-8 h-8 rounded bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+            <span className="font-display font-black text-primary-foreground text-sm">N</span>
           </div>
-          <span className="font-display text-xl font-bold tracking-wider text-foreground">
-            ZPORTEX
+          <span className="font-display text-xl font-black tracking-tighter text-foreground uppercase">
+            NDCA
           </span>
         </div>
 
@@ -48,6 +49,13 @@ const Navbar = () => {
           <button className="p-2 rounded-full hover:bg-muted transition-colors text-foreground/70 hover:text-foreground">
             <Search size={18} />
           </button>
+          <Link 
+            to="/login"
+            className="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-primary text-primary-foreground rounded-lg font-display text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-primary/10"
+          >
+            <LogIn size={14} />
+            Sign In
+          </Link>
           <button
             className="md:hidden p-2 text-foreground"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -70,6 +78,13 @@ const Navbar = () => {
                 {item}
               </a>
             ))}
+            <Link 
+              to="/login"
+              className="mt-2 flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-lg font-display text-xs font-bold uppercase tracking-widest"
+              onClick={() => setMobileOpen(false)}
+            >
+              Sign In
+            </Link>
           </div>
         </div>
       )}

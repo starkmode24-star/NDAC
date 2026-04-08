@@ -2,12 +2,12 @@ import { Zap, TrendingUp, Trophy, Tv, BarChart3, Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const features = [
-  { icon: Tv, title: "Live Streaming", desc: "Watch every game in HD with zero lag, available across all your devices." },
-  { icon: Zap, title: "Real-Time Scores", desc: "Instant score updates with detailed match statistics and play-by-play." },
-  { icon: TrendingUp, title: "In-Depth Analysis", desc: "Expert commentary and tactical breakdowns from top sports analysts." },
-  { icon: Trophy, title: "All Leagues", desc: "Coverage of 200+ leagues from football, basketball, tennis, and more." },
-  { icon: BarChart3, title: "Stats & Data", desc: "Advanced analytics, player comparisons, and predictive insights." },
-  { icon: Globe, title: "Global Coverage", desc: "Sports events from every continent, 24/7 without geographic limits." },
+  { icon: Trophy, title: "League Management", desc: "Complete tools for creating tournaments, fixtures, and automatic points tables." },
+  { icon: Zap, title: "Live Scoring", desc: "Ball-by-ball updates for local matches with instant sync to public apps." },
+  { icon: TrendingUp, title: "Player Stats", desc: "Detailed performance tracking, career records, and selection trials management." },
+  { icon: BarChart3, title: "Audit & Compliance", desc: "Secure Aadhaar masking and full audit trails for player document approvals." },
+  { icon: Tv, title: "Media Centre", desc: "A dedicated space for match highlights, gallery albums, and official news." },
+  { icon: Globe, title: "Unified Platform", desc: "One system connecting Super Admin, Clubs, and Players across web and mobile." },
 ];
 
 const FeaturesSection = () => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import heroImg from "@/assets/hero-stadium.jpg";
-import playerImg from "@/assets/player-cutout.png";
+import heroImg from "@/assets/cricket-stadium.png";
+import playerImg from "@/assets/Rohit Sharma ready for the game.png";
 
 const HeroSection = () => {
   const [stage, setStage] = useState(0);
@@ -27,7 +27,7 @@ const HeroSection = () => {
       <div className="absolute inset-0">
         <img
           src={heroImg}
-          alt="Stadium at night"
+          alt="Cricket Stadium"
           className="w-full h-full object-cover"
           width={1920}
           height={1080}
@@ -65,8 +65,8 @@ const HeroSection = () => {
       >
         <img
           src={playerImg}
-          alt="Football player"
-          className="h-[70vh] max-h-[700px] object-contain drop-shadow-2xl"
+          alt="Cricket player"
+          className="h-[75vh] max-h-[750px] object-contain drop-shadow-2xl"
           width={800}
           height={1200}
         />
@@ -97,7 +97,7 @@ const HeroSection = () => {
               }}
             >
               <span className="w-1 h-6 bg-primary rounded-full" />
-              Official FIFA World Cup 2030 Streaming
+              Official Nashik District Cricket Association Streaming
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-live-red text-foreground animate-pulse-live">
                 LIVE
               </span>
@@ -113,7 +113,7 @@ const HeroSection = () => {
                   filter: stage >= 4 ? "blur(0px)" : "blur(4px)",
                 }}
               >
-                All Sports.
+                All Cricket.
               </span>
               <span
                 className="block transition-all duration-700 ease-out"
@@ -186,18 +186,18 @@ const HeroSection = () => {
           <div className="hidden lg:flex flex-col gap-3 w-64">
             {[
               {
-                title: "Surprise Strategy: How The New Coach Sparked A Comeback",
-                image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=300&h=180&fit=crop",
+                title: "Pitch Report: How the Dry Surface Will Impact Spinners",
+                image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=300&h=180&fit=crop",
                 delay: 0,
               },
               {
-                title: "Blockbuster Transfer: Star Player Joins Rival Club",
-                image: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=300&h=180&fit=crop",
+                title: "Star Player Sign-up: Regional Star Joins NDCA A-DIV",
+                image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=300&h=180&fit=crop",
                 delay: 150,
               },
               {
-                title: "Derby Thriller: Last-Minute Winning Goal",
-                image: "https://images.unsplash.com/photo-1508098682722-e99c643e7f76?w=300&h=180&fit=crop",
+                title: "Derby Highlight: Last-Over Boundary Wins It",
+                image: "https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=300&h=180&fit=crop",
                 delay: 300,
               },
             ].map((card) => (
@@ -231,22 +231,25 @@ const MatchCard = () => (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <p className="font-display text-2xl font-bold uppercase">Japan</p>
+          <p className="font-display text-2xl font-bold uppercase tracking-tighter">Nashik Lions</p>
         </div>
-        <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-lg">🇯🇵</div>
+        <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-lg font-black text-primary">NL</div>
       </div>
-      <span className="inline-block px-3 py-1 text-[10px] font-bold uppercase bg-live-red text-foreground rounded">
-        Versus
-      </span>
+      <div className="flex items-center gap-2">
+        <span className="inline-block px-3 py-1 text-[10px] font-bold uppercase bg-live-red text-foreground rounded">
+          Versus
+        </span>
+        <span className="text-[10px] text-muted-foreground font-bold tracking-widest uppercase">T20 Bash</span>
+      </div>
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <p className="font-display text-2xl font-bold uppercase">France</p>
+          <p className="font-display text-2xl font-bold uppercase tracking-tighter">Deolali Raiders</p>
         </div>
-        <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center text-lg">🇫🇷</div>
+        <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-lg font-black text-primary">DR</div>
       </div>
       <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t border-border/30">
-        <span>18 JAN 2025</span>
-        <span className="text-primary font-semibold">22:00 WIB</span>
+        <span>GOLF CLUB GROUND</span>
+        <span className="text-primary font-bold">LIVE NOW</span>
       </div>
     </div>
   </div>

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
 const stats = [
-  { value: "200+", label: "Leagues Covered" },
-  { value: "50M+", label: "Active Fans" },
-  { value: "10K+", label: "Matches / Month" },
-  { value: "99.9%", label: "Uptime" },
+  { value: "45+", label: "Registered Clubs" },
+  { value: "2,500+", label: "Active Players" },
+  { value: "1,200+", label: "Matches / Season" },
+  { value: "15+", label: "Tournaments" },
 ];
 
 const StatsSection = () => {
