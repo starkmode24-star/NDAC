@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(PLAYER)
+  
+  // Relations
+  clubAdmin Club?    @relation("ClubAdmin")
+  player    Player?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  SUPER_ADMIN
+  CLUB_ADMIN
+  PLAYER
+}
+
+model Club {
+  id          String   @id @default(uuid())
+  name        String
+  adminId     String?  @unique
+  admin       User?    @relation("ClubAdmin", fields: [adminId], references: [id])
+  status      ApprovalStatus @default(PENDING)
+  
+  players     Player[]
+  homeMatches Match[]  @relation("HomeTeam")
+  awayMatches Match[]  @relation("AwayTeam")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Player {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  clubId      String
+  club        Club     @relation(fields: [clubId], references: [id])
+  
+  firstName   String
+  lastName    String
+  dob         DateTime
+  aadhaar     String   @unique
+  address     String?
+  specialty   String?  // e.g., Batsman, Bowler, All-rounder
+  ageGroup    String?  // e.g., U-14, U-16, U-19, Senior
+  
+  status      ApprovalStatus @default(PENDING)
+  documents   Json?    // Stores S3 URLs
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum ApprovalStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model Match {
+  id          String   @id @default(uuid())
+  homeTeamId  String
+  awayTeamId  String
+  homeTeam    Club     @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam    Club     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  
+  date        DateTime
+  venue       String
+  format      String   // T20, ODI, etc.
+  status      MatchStatus @default(UPCOMING)
+  score       Json?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum MatchStatus {
+  UPCOMING
+  LIVE
+  COMPLETED
+}
+
+model News {
+  id          String   @id @default(uuid())
+  title       String
+  content     String   // Rich text / HTML
+  category    String?
+  imageUrl    String?
+  publishedAt DateTime @default(now())
+}
