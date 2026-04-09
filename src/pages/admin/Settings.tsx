@@ -14,7 +14,11 @@ import {
   User,
   Mail,
   Smartphone,
-  CheckCircle2
+  CheckCircle2,
+  Download,
+  UploadCloud,
+  RefreshCcw,
+  Cloud
 } from "lucide-react";
 
 const Settings = () => {
@@ -93,6 +97,38 @@ const Settings = () => {
                 </div>
               ))}
             </div>
+          </SectionCard>
+
+          {/* Backup Section */}
+          <SectionCard title="Data Continuity & Backups" description="AWS S3 Cloud backups and system snapshots.">
+             <div className="mt-6 p-6 rounded-2xl bg-[#0B1220] border border-[#1F2937] space-y-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                   <div className="flex gap-4 items-center">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                         <Cloud size={24} />
+                      </div>
+                      <div>
+                         <p className="text-sm font-black text-white uppercase tracking-tight">Daily Automated Sync</p>
+                         <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest">Target Path: s3://ndca-backups-mumbai/db-prod/</p>
+                      </div>
+                   </div>
+                   <div className="text-left md:text-right">
+                      <p className="text-[10px] font-black uppercase text-white mb-1">Last Backup Successful</p>
+                      <p className="text-[9px] font-bold text-emerald-400 uppercase flex items-center justify-end gap-1"><CheckCircle2 size={10}/> 4 hours ago Â· 124.5 MB</p>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-[#1F2937]/50">
+                    <Button variant="outline" className="border-[#1F2937] text-white font-black uppercase text-[10px] h-12 rounded-xl gap-2 hover:bg-white/5">
+                       <Download size={16} className="text-[#9CA3AF]" />
+                       Download Daily Snapshot
+                    </Button>
+                    <Button className="bg-[#FACC15] text-[#0B1220] font-black uppercase text-[10px] h-12 rounded-xl gap-2 hover:bg-[#FACC15]/90 shadow-lg shadow-[#FACC15]/10">
+                       <RefreshCcw size={16} />
+                       Trigger Manual Backup
+                    </Button>
+                </div>
+             </div>
           </SectionCard>
         </div>
       </div>

@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { Menu, X, Bell, Search, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const navItems = ["Tournaments", "Clubs", "Players", "Gallery", "Reports"];
+const navItems = [
+  { label: "Home", path: "/" },
+  { label: "About", path: "/about" },
+  { label: "Info", path: "/information" },
+  { label: "Stadium", path: "/infrastructure" },
+  { label: "Honors", path: "/hall-of-fame" },
+  { label: "Sponsors", path: "/sponsors" },
+  { label: "Contact", path: "/contact" },
+];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -32,13 +40,13 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors duration-200 uppercase tracking-wide"
+            <Link
+              key={item.label}
+              to={item.path}
+              className="text-[10px] font-black text-foreground/70 hover:text-primary transition-colors duration-200 uppercase tracking-[0.2em]"
             >
-              {item}
-            </a>
+              {item.label}
+            </Link>
           ))}
         </div>
 
@@ -67,16 +75,16 @@ const Navbar = () => {
 
       {mobileOpen && (
         <div className="md:hidden glass-strong border-t border-border/20 animate-fade-in">
-          <div className="container py-4 flex flex-col gap-3">
+          <div className="container py-6 flex flex-col gap-4">
             {navItems.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-sm font-medium text-foreground/80 hover:text-primary py-2 uppercase tracking-wide"
+              <Link
+                key={item.label}
+                to={item.path}
+                className="text-sm font-black text-foreground/80 hover:text-primary uppercase tracking-[0.2em]"
                 onClick={() => setMobileOpen(false)}
               >
-                {item}
-              </a>
+                {item.label}
+              </Link>
             ))}
             <Link 
               to="/login"

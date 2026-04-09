@@ -14,7 +14,11 @@ import {
   UserCheck,
   CreditCard,
   Zap,
-  ShieldCheck
+  ShieldCheck,
+  Radio,
+  FileEdit,
+  Handshake,
+  Youtube
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -23,10 +27,15 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: Users, label: "Players", path: "/admin/players" },
   { icon: Building2, label: "Clubs", path: "/admin/clubs" },
+  { icon: ShieldCheck, label: "Admins", path: "/admin/users" },
+  { icon: Calendar, label: "Events", path: "/admin/events" },
+  { icon: Radio, label: "Broadcast", path: "/admin/broadcast" },
+  { icon: FileEdit, label: "CMS Editor", path: "/admin/page-editor" },
   { icon: Trophy, label: "Matches", path: "/admin/matches" },
   { icon: Zap, label: "Live Scoring", path: "/admin/match-control" },
-  { icon: ShieldCheck, label: "Admins", path: "/admin/users" },
   { icon: Calendar, label: "Leagues", path: "/admin/leagues" },
+  { icon: Handshake, label: "Sponsors", path: "/admin/sponsors" },
+  { icon: Youtube, label: "Videos", path: "/admin/videos" },
   { icon: Newspaper, label: "News", path: "/admin/news" },
   { icon: UserCheck, label: "Selections", path: "/admin/selections" },
   { icon: CreditCard, label: "Billing", path: "/admin/billing" },
