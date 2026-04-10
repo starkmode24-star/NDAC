@@ -20,8 +20,10 @@ import {
   Handshake,
   Youtube
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+
+import customLogo from "@/assets/logo.jpg";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
@@ -46,13 +48,18 @@ const menuItems = [
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('ndca_token');
+    localStorage.removeItem('ndca_user');
+    navigate('/login');
+  };
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-[#0B1220] border-r border-[#1F2937] flex flex-col z-50">
       <div className="p-6 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-[#FACC15] flex items-center justify-center flex-shrink-0 shadow-[0_0_20px_rgba(250,204,21,0.2)]">
-          <Trophy className="text-[#0B1220]" size={24} />
-        </div>
+        <img src={customLogo} alt="NDCA Admin Logo" className="w-10 h-10 rounded-lg object-contain bg-[#1F2937]/50 p-1" />
         <div>
           <h1 className="text-xl font-display font-black tracking-tighter text-white uppercase leading-none">NDCA</h1>
           <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest mt-0.5">Admin Portal</p>
@@ -87,7 +94,7 @@ const Sidebar = () => {
       </nav>
 
       <div className="p-4 border-t border-[#1F2937]">
-        <button className="flex items-center gap-3 w-full px-4 py-3 text-[#9CA3AF] hover:text-[#EF4444] transition-colors group">
+        <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-3 text-[#9CA3AF] hover:text-[#EF4444] transition-colors group">
           <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
           <span className="text-sm font-bold uppercase tracking-widest font-sans">Logout System</span>
         </button>

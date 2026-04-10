@@ -25,16 +25,33 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
+import { AddEventDialog } from "@/components/admin/AddEventDialog";
 
-const events = [
-  { id: 1, title: "Annual General Meeting 2026", date: "Apr 25, 2026", time: "10:30 AM", venue: "NDCA Conference Hall", type: "Meeting", status: "Upcoming" },
-  { id: 2, title: "U-16 Player Award Ceremony", date: "Apr 28, 2026", time: "05:00 PM", venue: "Main Pavilion", type: "Ceremony", status: "Upcoming" },
-  { id: 3, title: "Scouting Clinic - North Zone", date: "May 02, 2026", time: "08:00 AM", venue: "Academy Grounds", type: "Trial/Clinic", status: "Draft" },
-  { id: 4, title: "Press Briefing: NPL Season 5", date: "Apr 12, 2026", time: "11:00 AM", venue: "Media Center", type: "Press", status: "Upcoming" },
-  { id: 5, title: "Coach Certification Workshop", date: "Mar 20, 2026", time: "09:00 AM", venue: "Lecture Hall B", type: "Training", status: "Completed" },
-];
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { eventApi } from "@/lib/api";
 
 const EventsManager = () => {
+  const queryClient = useQueryClient();
+
+  const { data: events, isLoading } = useQuery({
+    queryKey: ['events'],
+    queryFn: async () => {
+      const response = await eventApi.getAll();
+      return response.data;
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => eventApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+    }
+  });
+
+  if (isLoading) {
+    return <AdminLayout><div className="text-white text-center py-20">Loading Events...</div></AdminLayout>;
+  }
+
   return (
     <AdminLayout>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -44,16 +61,13 @@ const EventsManager = () => {
             Schedule association meetings, awards, and certification programs.
           </p>
         </div>
-        <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-widest text-xs px-6 h-12 rounded-xl">
-          <Plus size={18} className="mr-2" />
-          Create New Event
-        </Button>
+        <AddEventDialog />
       </div>
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
          {[
-           { label: "Active Events", val: "12", icon: Calendar, color: "text-blue-400" },
+           { label: "Active Events", val: events?.length?.toString() || "0", icon: Calendar, color: "text-blue-400" },
            { label: "Total Registrations", val: "450", icon: Users, color: "text-[#FACC15]" },
            { label: "Pending Awards", val: "08", icon: Award, color: "text-emerald-400" },
            { label: "Venue Bookings", val: "05", icon: MapPin, color: "text-orange-400" },
@@ -97,7 +111,7 @@ const EventsManager = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {events.map((e) => (
+              {events?.map((e: any) => (
                 <TableRow key={e.id} className="border-[#1F2937] hover:bg-white/[0.02] transition-colors">
                   <TableCell>
                     <span className="text-sm font-bold text-white font-sans">{e.title}</span>
@@ -109,8 +123,8 @@ const EventsManager = () => {
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                       <p className="text-xs font-bold text-white uppercase">{e.date}</p>
-                       <p className="text-[10px] text-[#9CA3AF] font-medium flex items-center gap-1"><Clock size={10}/> {e.time}</p>
+                       <p className="text-xs font-bold text-white uppercase">{new Date(e.date).toLocaleDateString()}</p>
+                       <p className="text-[10px] text-[#9CA3AF] font-medium flex items-center gap-1"><Clock size={10}/> {e.time || 'TBD'}</p>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -118,8 +132,8 @@ const EventsManager = () => {
                   </TableCell>
                   <TableCell>
                     <Badge className={`uppercase text-[9px] font-black border-0 ${
-                      e.status === 'Upcoming' ? 'bg-blue-500/10 text-blue-400' :
-                      e.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400' :
+                      e.status === 'UPCOMING' ? 'bg-blue-500/10 text-blue-400' :
+                      e.status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-400' :
                       'bg-gray-500/10 text-gray-400'
                     }`}>
                       {e.status}
@@ -128,11 +142,26 @@ const EventsManager = () => {
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                        <Button variant="ghost" size="icon" className="h-8 w-8 text-[#9CA3AF] hover:text-[#FACC15]"><Edit2 size={14}/></Button>
-                       <Button variant="ghost" size="icon" className="h-8 w-8 text-[#9CA3AF] hover:text-[#EF4444]"><Trash2 size={14}/></Button>
+                       <Button 
+                         variant="ghost" 
+                         size="icon" 
+                         onClick={() => deleteMutation.mutate(e.id)}
+                         disabled={deleteMutation.isPending}
+                         className="h-8 w-8 text-[#9CA3AF] hover:text-[#EF4444]"
+                       >
+                         <Trash2 size={14}/>
+                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
+              {(!events || events.length === 0) && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-10 text-[#9CA3AF] font-bold uppercase tracking-widest text-xs">
+                    No active events listed.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>

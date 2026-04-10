@@ -110,16 +110,17 @@ const Contact = () => {
       </section>
 
       {/* Map Section */}
-      <section className="h-[450px] relative w-full overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000">
-         {/* Simple Mock Map Integration */}
-         <div className="absolute inset-0 bg-muted flex items-center justify-center flex-col text-center">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4 border border-primary/20 animate-pulse">
-               <MapPin size={40} className="text-primary" />
-            </div>
-            <p className="text-2xl font-display font-black uppercase tracking-tight text-foreground">Interactive Google Map</p>
-            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-2">{`Golf Club Ground, NDCA Pavilion`}</p>
-         </div>
-         {/* In real app, replace with iframe or real map API */}
+      <section className="h-[450px] relative w-full overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 border-t border-border">
+         <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3749.193266937418!2d73.766324376043!3d19.989895322960533!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bddec9e7987814b%3A0xe67f920f786c57f6!2sGolf%20Club%20Ground!5e0!3m2!1sen!2sin!4v1712752000000!5m2!1sen!2sin" 
+            width="100%" 
+            height="100%" 
+            style={{ border: 0 }} 
+            allowFullScreen 
+            loading="lazy" 
+            referrerPolicy="no-referrer-when-downgrade"
+            className="w-full h-full"
+         ></iframe>
          <div className="absolute inset-0 bg-primary/5 pointer-events-none mix-blend-multiply" />
       </section>
     </PublicLayout>

@@ -3,14 +3,14 @@ import { useEffect, useRef, useState } from "react";
 const sections = [
   {
     title: "Never Miss A Moment",
-    desc: "Get instant notifications for goals, red cards, and game-changing plays. Our real-time engine delivers updates faster than any competitor.",
-    image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&h=400&fit=crop",
+    desc: "Get instant notifications for wickets, boundaries, and game-changing plays. Our real-time engine delivers updates faster than any competitor.",
+    image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=600&h=400&fit=crop",
     reverse: false,
   },
   {
     title: "Deep Dive Analytics",
-    desc: "From heat maps to expected goals, explore advanced statistics that reveal the story behind every match. Powered by AI-driven insights.",
-    image: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&h=400&fit=crop",
+    desc: "From heat maps to win probability, explore advanced statistics that reveal the story behind every match. Powered by AI-driven insights.",
+    image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600&h=400&fit=crop",
     reverse: true,
   },
 ];

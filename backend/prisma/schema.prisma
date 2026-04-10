@@ -3,16 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  role      Role     @default(PLAYER)
+  role      String   @default("PLAYER")
   
-  // Relations
   clubAdmin Club?    @relation("ClubAdmin")
   player    Player?
   
@@ -20,18 +20,12 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-enum Role {
-  SUPER_ADMIN
-  CLUB_ADMIN
-  PLAYER
-}
-
 model Club {
   id          String   @id @default(uuid())
   name        String
   adminId     String?  @unique
   admin       User?    @relation("ClubAdmin", fields: [adminId], references: [id])
-  status      ApprovalStatus @default(PENDING)
+  status      String   @default("PENDING")
   
   players     Player[]
   homeMatches Match[]  @relation("HomeTeam")
@@ -53,51 +47,187 @@ model Player {
   dob         DateTime
   aadhaar     String   @unique
   address     String?
-  specialty   String?  // e.g., Batsman, Bowler, All-rounder
-  ageGroup    String?  // e.g., U-14, U-16, U-19, Senior
+  specialty   String?  
+  ageGroup    String?  
   
-  status      ApprovalStatus @default(PENDING)
-  documents   Json?    // Stores S3 URLs
+  status      String   @default("PENDING")
+  documents   String?  
   
+  selections  TrialRegistration[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-enum ApprovalStatus {
-  PENDING
-  UNDER_REVIEW
-  APPROVED
-  REJECTED
+model League {
+  id        String   @id @default(uuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  season    String
+  matches   Match[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Match {
   id          String   @id @default(uuid())
-  homeTeamId  String
-  awayTeamId  String
-  homeTeam    Club     @relation("HomeTeam", fields: [homeTeamId], references: [id])
-  awayTeam    Club     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  team1Id     String
+  team2Id     String
+  team1       Club     @relation("HomeTeam", fields: [team1Id], references: [id])
+  team2       Club     @relation("AwayTeam", fields: [team2Id], references: [id])
+  leagueId    String?
+  league      League?  @relation(fields: [leagueId], references: [id])
   
   date        DateTime
   venue       String
-  format      String   // T20, ODI, etc.
-  status      MatchStatus @default(UPCOMING)
-  score       Json?
+  matchType   String   // T20, ODI, etc.
+  status      String   @default("UPCOMING")
   
+  team1Score  String?
+  team2Score  String?
+  result      String?
+  
+  innings     Innings[]
+  balls       BallByBall[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-enum MatchStatus {
-  UPCOMING
-  LIVE
-  COMPLETED
+model Innings {
+  id           String      @id @default(uuid())
+  matchId      String
+  match        Match       @relation(fields: [matchId], references: [id])
+  battingTeamId String
+  totalRuns    Int         @default(0)
+  totalWickets Int         @default(0)
+  overs        Float       @default(0.0)
+  balls        BallByBall[]
+
+  createdAt    DateTime    @default(now())
+}
+
+model BallByBall {
+  id          String   @id @default(uuid())
+  matchId     String
+  match       Match    @relation(fields: [matchId], references: [id])
+  inningsId   String
+  innings     Innings  @relation(fields: [inningsId], references: [id])
+  over        Int
+  ball        Int
+  runs        Int
+  extras      Int?     @default(0)
+  wicket      Boolean  @default(false)
+  batterId    String?
+  bowlerId    String?
+  commentary  String?
+
+  createdAt   DateTime @default(now())
 }
 
 model News {
   id          String   @id @default(uuid())
   title       String
-  content     String   // Rich text / HTML
+  content     String   
   category    String?
   imageUrl    String?
   publishedAt DateTime @default(now())
+}
+
+model SelectionTrial {
+  id          String   @id @default(uuid())
+  title       String
+  ageGroup    String
+  date        DateTime
+  venue       String
+  status      String   @default("OPEN")
+  registrations TrialRegistration[]
+
+  createdAt   DateTime @default(now())
+}
+
+model TrialRegistration {
+  id               String             @id @default(uuid())
+  trialId          String
+  trial            SelectionTrial     @relation(fields: [trialId], references: [id])
+  playerId         String
+  player           Player             @relation(fields: [playerId], references: [id])
+  status           String             @default("APPLIED")
+  performanceNotes String?
+
+  createdAt DateTime @default(now())
+}
+
+model Gallery {
+  id          String   @id @default(uuid())
+  title       String
+  type        String   @default("IMAGE")
+  url         String
+  category    String?  
+  createdAt   DateTime @default(now())
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  payerName     String
+  amount        Float
+  type          String   // e.g., "Trial Fee", "Academy Fee", "Tournament Fee"
+  method        String   // e.g., "UPI", "Bank Transfer", "Cash"
+  status        String   @default("PENDING") // PENDING, FLAGGED, VERIFIED
+  date          DateTime @default(now())
+  transactionId String?
+  receiptUrl    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  date        DateTime
+  time        String?  // e.g., "10:30 AM"
+  venue       String
+  type        String   // e.g., "Meeting", "Ceremony"
+  status      String   @default("UPCOMING") // UPCOMING, COMPLETED, DRAFT
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Sponsor {
+  id        String   @id @default(uuid())
+  name      String
+  tier      String   // Title, Associate, etc.
+  logoUrl   String?
+  industry  String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Video {
+  id          String   @id @default(uuid())
+  title       String
+  youtubeId   String
+  category    String?  // Highlights, Interviews, Live
+  isFeatured  Boolean  @default(false)
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+model Setting {
+  id    String @id @default("site_config")
+  key   String @unique
+  value String // JSON stringified
+}
+
+model PageSection {
+  id        String   @id @default(uuid())
+  page      String   // e.g., "home", "about"
+  type      String   // hero, news_grid, sponsors
+  content   String   // JSON payload
+  order     Int
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
 }

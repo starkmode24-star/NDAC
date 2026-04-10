@@ -69,19 +69,22 @@ const Infrastructure = () => {
       </section>
 
       {/* Seating Layout Section */}
-      <section className="py-24 bg-muted/20">
+      <section className="py-24 bg-muted/20 overflow-hidden">
         <div className="container">
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
               <div>
                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest mb-6">
                     <Layers size={14} />
-                    Seating Chart
+                    Seating Chart & Facilities
                  </div>
                  <h2 className="text-4xl md:text-5xl font-display font-black uppercase tracking-tight mb-8">Choose Your <span className="text-primary italic">Vantage Point</span></h2>
                  
                  <div className="space-y-6">
                     {stands.map((stand) => (
-                      <div key={stand.name} className="p-6 rounded-2xl bg-background border border-border hover:border-primary transition-all group">
+                      <div 
+                        key={stand.name} 
+                        className="p-6 rounded-2xl bg-background border border-border hover:border-primary transition-all group cursor-pointer"
+                      >
                          <div className="flex justify-between items-start mb-2">
                             <h4 className="text-xl font-display font-black uppercase group-hover:text-primary transition-colors">{stand.name}</h4>
                             <Badge variant="outline" className="text-[10px] font-black uppercase border-primary/30 text-primary">{stand.capacity} seats</Badge>
@@ -89,28 +92,46 @@ const Infrastructure = () => {
                          <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest leading-loose">
                             Key Features: {stand.features}
                          </p>
+                         <div className="mt-4 flex gap-2">
+                            <div className="h-1 flex-1 bg-muted rounded-full overflow-hidden">
+                               <div className="h-full bg-primary animate-pulse" style={{ width: '85%' }} />
+                            </div>
+                            <span className="text-[8px] font-black uppercase text-[#9CA3AF]">Occ. Rate</span>
+                         </div>
                       </div>
                     ))}
                  </div>
               </div>
 
-              {/* Mock Stadium Interaction */}
-              <div className="relative group">
-                 <div className="absolute -inset-10 bg-primary/5 rounded-full blur-[100px] group-hover:bg-primary/10 transition-all duration-700" />
-                 <div className="relative aspect-square rounded-[4rem] bg-[#0B1220] border-8 border-muted p-12 overflow-hidden shadow-2xl flex items-center justify-center">
-                    <div className="w-full h-full rounded-full border-[1.5rem] border-primary/20 relative flex items-center justify-center animate-spin-slow">
-                       {/* Abstract Stadium Rep */}
-                       <div className="w-3/4 h-3/4 rounded-full border-4 border-dashed border-primary/40" />
+              {/* Facility Gallery */}
+              <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-4">
+                    <div className="aspect-[4/5] rounded-[2rem] overflow-hidden group relative">
+                       <img src="https://images.unsplash.com/photo-1540741282455-c3e079d7a206?q=80&w=2070" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stadium Night" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
+                          <p className="text-white font-black uppercase text-xs">Night Match Floodlights</p>
+                       </div>
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center flex-col text-center p-12">
-                       <div className="w-32 h-44 bg-emerald-500/80 rounded-2xl shadow-[0_0_50px_rgba(16,185,129,0.3)] mb-4 border-2 border-white/20" />
-                       <p className="text-white font-display font-black text-2xl uppercase italic">The Pitch</p>
-                       <p className="text-[10px] text-primary font-black uppercase tracking-[0.4em] mt-2">South Stand View</p>
+                    <div className="aspect-square rounded-[2rem] overflow-hidden group relative">
+                       <img src="https://images.unsplash.com/photo-1593341646782-e0b495cff86d?q=80&w=1974" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Pitch" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
+                          <p className="text-white font-black uppercase text-xs">International Pitch</p>
+                       </div>
                     </div>
                  </div>
-                 <div className="absolute -bottom-10 right-10 p-4 bg-primary text-[#0B1220] rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl flex items-center gap-3">
-                    <Zap size={16} animate-pulse/>
-                    Interactive Seating Plan Launching Soon
+                 <div className="space-y-4 pt-12">
+                    <div className="aspect-square rounded-[2rem] overflow-hidden group relative">
+                       <img src="https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=2071" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Nets" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
+                          <p className="text-white font-black uppercase text-xs">High-Tech Nets</p>
+                       </div>
+                    </div>
+                    <div className="aspect-[4/5] rounded-[2rem] overflow-hidden group relative">
+                       <img src="https://images.unsplash.com/photo-1512716676301-88c5daa6912b?q=80&w=1934" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stands" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
+                          <p className="text-white font-black uppercase text-xs">VIP Pavilion End</p>
+                       </div>
+                    </div>
                  </div>
               </div>
            </div>

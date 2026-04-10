@@ -33,6 +33,14 @@ import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem('ndca_token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -50,24 +58,25 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           
           {/* Admin Routes */}
-          <Route path="/admin" element={<Dashboard />} />
-          <Route path="/admin/players" element={<PlayerManagement />} />
-          <Route path="/admin/clubs" element={<ClubManagement />} />
-          <Route path="/admin/matches" element={<MatchManagement />} />
-          <Route path="/admin/match-control" element={<MatchController />} />
-          <Route path="/admin/users" element={<UserAccess />} />
-          <Route path="/admin/leagues" element={<LeagueManagement />} />
-          <Route path="/admin/news" element={<NewsContent />} />
-          <Route path="/admin/selections" element={<SelectionProcess />} />
-          <Route path="/admin/billing" element={<Billing />} />
-          <Route path="/admin/gallery" element={<GalleryAdmin />} />
-          <Route path="/admin/reports" element={<Reports />} />
-          <Route path="/admin/settings" element={<Settings />} />
-          <Route path="/admin/events" element={<EventsManager />} />
-          <Route path="/admin/broadcast" element={<BroadcastCenter />} />
-          <Route path="/admin/page-editor" element={<PageEditor />} />
-          <Route path="/admin/sponsors" element={<SponsorManager />} />
-          <Route path="/admin/videos" element={<VideoManager />} />
+          <Route path="/admin" element={<AdminRoute><Dashboard /></AdminRoute>} />
+          <Route path="/admin/players" element={<AdminRoute><PlayerManagement /></AdminRoute>} />
+          <Route path="/admin/clubs" element={<AdminRoute><ClubManagement /></AdminRoute>} />
+          <Route path="/admin/matches" element={<AdminRoute><MatchManagement /></AdminRoute>} />
+          <Route path="/admin/match-control" element={<AdminRoute><MatchController /></AdminRoute>} />
+          <Route path="/admin/match-control/:id" element={<AdminRoute><MatchController /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><UserAccess /></AdminRoute>} />
+          <Route path="/admin/leagues" element={<AdminRoute><LeagueManagement /></AdminRoute>} />
+          <Route path="/admin/news" element={<AdminRoute><NewsContent /></AdminRoute>} />
+          <Route path="/admin/selections" element={<AdminRoute><SelectionProcess /></AdminRoute>} />
+          <Route path="/admin/billing" element={<AdminRoute><Billing /></AdminRoute>} />
+          <Route path="/admin/gallery" element={<AdminRoute><GalleryAdmin /></AdminRoute>} />
+          <Route path="/admin/reports" element={<AdminRoute><Reports /></AdminRoute>} />
+          <Route path="/admin/settings" element={<AdminRoute><Settings /></AdminRoute>} />
+          <Route path="/admin/events" element={<AdminRoute><EventsManager /></AdminRoute>} />
+          <Route path="/admin/broadcast" element={<AdminRoute><BroadcastCenter /></AdminRoute>} />
+          <Route path="/admin/page-editor" element={<AdminRoute><PageEditor /></AdminRoute>} />
+          <Route path="/admin/sponsors" element={<AdminRoute><SponsorManager /></AdminRoute>} />
+          <Route path="/admin/videos" element={<AdminRoute><VideoManager /></AdminRoute>} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

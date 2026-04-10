@@ -14,7 +14,8 @@ import {
   TrendingUp,
   ArrowDownRight,
   Printer,
-  Users
+  Users,
+  FileDown
 } from "lucide-react";
 import { 
   BarChart, 
@@ -28,6 +29,9 @@ import {
   Pie,
   Cell
 } from 'recharts';
+import { reportApi } from "@/lib/api";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const data = [
   { name: 'District A', players: 120, matches: 45 },
@@ -46,6 +50,16 @@ const pieData = [
 const COLORS = ['#FACC15', '#3B82F6', '#EF4444'];
 
 const Reports = () => {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = (type: string) => {
+    setIsExporting(true);
+    const url = reportApi.getDownloadUrl(type);
+    window.open(url, '_blank');
+    toast.success(`${type} report requested`);
+    setTimeout(() => setIsExporting(false), 2000);
+  };
+
   return (
     <AdminLayout>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -58,12 +72,26 @@ const Reports = () => {
         <div className="flex gap-4">
           <Button variant="outline" className="h-12 border-[#1F2937] text-white font-black uppercase tracking-widest text-[10px] bg-[#111827]">
             <Printer size={16} className="mr-2" />
-            Print Report
+            Print Status
           </Button>
-          <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-widest text-xs px-6 h-12 rounded-xl">
-            <Download size={18} className="mr-2" />
-            Export Data
-          </Button>
+          <div className="flex gap-2">
+             <Button 
+                onClick={() => handleExport('players')}
+                disabled={isExporting}
+                className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-widest text-[10px] px-4 h-12 rounded-xl"
+              >
+              <Users size={16} className="mr-2" />
+              Players CSV
+            </Button>
+            <Button 
+                onClick={() => handleExport('matches')}
+                disabled={isExporting}
+                className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-black uppercase tracking-widest text-[10px] px-4 h-12 rounded-xl"
+              >
+              <FileDown size={16} className="mr-2" />
+              Matches CSV
+            </Button>
+          </div>
         </div>
       </div>
 

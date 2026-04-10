@@ -1,8 +1,10 @@
 import PublicLayout from "@/components/PublicLayout";
-import { FileText, Download, Gavel, Scale, FileCheck, HelpCircle } from "lucide-react";
+import { FileText, Download, Gavel, Scale, FileCheck, HelpCircle, Trophy, Users, ShieldAlert } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const docs = [
   { title: "Financial Report 2024-25", size: "2.4 MB", date: "Apr 01, 2025" },
@@ -12,6 +14,22 @@ const docs = [
 ];
 
 const Information = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'constitution';
+  const [activeTab, setActiveTab] = useState(defaultTab);
+
+  useEffect(() => {
+    const tabFromUrl = searchParams.get('tab');
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (val: string) => {
+    setActiveTab(val);
+    setSearchParams({ tab: val });
+  };
+
   return (
     <PublicLayout>
       <section className="py-20 bg-muted/20">
@@ -31,7 +49,7 @@ const Information = () => {
             </p>
           </div>
 
-          <Tabs defaultValue="constitution" className="space-y-12">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-12">
             <TabsList className="bg-background border border-border p-1 h-auto grid grid-cols-2 lg:grid-cols-4 rounded-xl shadow-sm">
                 <TabsTrigger value="constitution" className="uppercase text-[10px] font-black py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Constitution</TabsTrigger>
                 <TabsTrigger value="elections" className="uppercase text-[10px] font-black py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Elections</TabsTrigger>

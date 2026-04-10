@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
 const legends = [
-  { name: "Vijay Merchant", year: "1980", specialty: "Batsman", stats: "10,240 Runs", img: "https://images.unsplash.com/photo-1540749303346-5b4fa416326c?auto=format&fit=crop&q=80" },
+  { name: "Vijay Merchant", year: "1980", specialty: "Batsman", stats: "10,240 Runs", img: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&q=80" },
   { name: "Vinod Kambli", year: "1994", specialty: "Batsman", stats: "High Score: 224", img: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&q=80" },
-  { name: "Zaheer Khan", year: "2011", specialty: "Bowler", stats: "21 Wkts (World Cup)", img: "https://images.unsplash.com/photo-1540749303346-5b4fa416326c?auto=format&fit=crop&q=80" },
+  { name: "Zaheer Khan", year: "2011", specialty: "Bowler", stats: "21 Wkts (World Cup)", img: "https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?auto=format&fit=crop&q=80" },
 ];
 
 const champions = [

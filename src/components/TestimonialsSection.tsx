@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Star } from "lucide-react";
 
 const testimonials = [
-  { name: "Marcus B.", role: "Football Fan", text: "Best sports platform I've ever used. The live scores are lightning fast and the UI is gorgeous.", rating: 5 },
-  { name: "Sophie L.", role: "Basketball Enthusiast", text: "The analytics features are incredible. I can track every stat for my favorite teams in real-time.", rating: 5 },
-  { name: "Ahmed K.", role: "Tennis Follower", text: "Global coverage is unmatched. I follow leagues from 5 different countries, all in one place.", rating: 5 },
+  { name: "Marcus B.", role: "Cricket Fan", text: "Best sports platform I've ever used. The live scores are lightning fast and the UI is gorgeous.", rating: 5 },
+  { name: "Sophie L.", role: "Cricket Analyst", text: "The analytics features are incredible. I can track every stat for my favorite teams in real-time.", rating: 5 },
+  { name: "Ahmed K.", role: "Local Player", text: "Global coverage is unmatched. I follow leagues from 5 different countries, all in one place.", rating: 5 },
 ];
 
 const TestimonialsSection = () => {

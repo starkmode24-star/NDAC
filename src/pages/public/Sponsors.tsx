@@ -1,23 +1,24 @@
 import PublicLayout from "@/components/PublicLayout";
 import { Handshake, TrendingUp, BadgeCheck, Globe, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const partners = [
-  { name: "Global Sports", tier: "Title Sponsor", logo: "ðŸ”¥", industry: "Sporting Goods" },
-  { name: "Nashik Bank", tier: "Banking Partner", logo: "ðŸ’°", industry: "Financial Services" },
-  { name: "TechNova", tier: "Digital Partner", logo: "ðŸ’¡", industry: "Information Technology" },
-  { name: "Everest Water", tier: "Hydration Partner", logo: "â „ï¸ ", industry: "FMCG" },
+  { name: "Global Sports", tier: "Title Sponsor", logo: "🔥", industry: "Sporting Goods" },
+  { name: "Nashik Bank", tier: "Banking Partner", logo: "💰", industry: "Financial Services" },
+  { name: "TechNova", tier: "Digital Partner", logo: "💡", industry: "Information Technology" },
+  { name: "Everest Water", tier: "Hydration Partner", logo: "❄️", industry: "FMCG" },
 ];
 
 const sponsors = [
-  { name: "Local Hero", logo: "ðŸŒŸ" },
-  { name: "City Pulse", logo: "âœ¨" },
-  { name: "Green Field", logo: "ðŸŒ±" },
-  { name: "Future Star", logo: "ðŸš€" },
-  { name: "Pro League", logo: "ðŸ †" },
-  { name: "Sportly", logo: "âš½" },
-  { name: "CricZone", logo: "ðŸ   " },
-  { name: "Fitness First", logo: "ðŸ’ª" },
+  { name: "Local Hero", logo: "🌟" },
+  { name: "City Pulse", logo: "✨" },
+  { name: "Green Field", logo: "🌱" },
+  { name: "Future Star", logo: "🚀" },
+  { name: "Pro League", logo: "🏆" },
+  { name: "Sportly", logo: "⚽" },
+  { name: "CricZone", logo: "🏏" },
+  { name: "Fitness First", logo: "💪" },
 ];
 
 const Sponsors = () => {

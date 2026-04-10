@@ -35,16 +35,32 @@ import {
   DialogFooter
 } from "@/components/ui/dialog";
 
-const transactions = [
-  { id: 1, player: "Arjun Singh", type: "Trial Fee", amount: "₹ 500", date: "Apr 08, 2026", status: "Verified", method: "UPI" },
-  { id: 2, player: "Ishan Sharma", type: "Academy Fee", amount: "₹ 2,500", date: "Apr 07, 2026", status: "Pending", method: "Bank Transfer" },
-  { id: 3, player: "Vicky Raut", type: "Trial Fee", amount: "₹ 500", date: "Apr 07, 2026", status: "Flagged", method: "UPI" },
-  { id: 4, player: "Rohit Patil", type: "Tournament Fee", amount: "₹ 1,200", date: "Apr 06, 2026", status: "Verified", method: "Cash" },
-  { id: 5, player: "Siddharth Jain", type: "Trial Fee", amount: "₹ 500", date: "Apr 05, 2026", status: "Pending", method: "UPI" },
-];
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { billingApi } from "@/lib/api";
 
 const Billing = () => {
   const [selectedReceipt, setSelectedReceipt] = useState<any>(null);
+  const queryClient = useQueryClient();
+
+  const { data: transactions, isLoading } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const response = await billingApi.getAll();
+      return response.data;
+    }
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string, status: string }) => billingApi.updateStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      setSelectedReceipt(null);
+    }
+  });
+
+  if (isLoading) {
+    return <AdminLayout><div className="text-white text-center py-20">Loading Transactions...</div></AdminLayout>;
+  }
 
   return (
     <AdminLayout>
@@ -119,27 +135,27 @@ const Billing = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.map((tx) => (
+              {transactions?.map((tx: any) => (
                 <TableRow key={tx.id} className="border-[#1F2937] hover:bg-white/[0.02] transition-colors">
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-[#1F2937] flex items-center justify-center text-[10px] font-black text-[#FACC15]">
-                        {tx.player.split(' ').map(n => n[0]).join('')}
+                        {tx.payerName?.split(' ').map((n: string) => n[0]).join('') || 'NA'}
                       </div>
-                      <span className="text-sm font-bold text-white font-sans">{tx.player}</span>
+                      <span className="text-sm font-bold text-white font-sans">{tx.payerName}</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <span className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">{tx.type}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-black text-[#FACC15]">{tx.amount}</span>
+                    <span className="text-sm font-black text-[#FACC15]">₹ {tx.amount.toFixed(2)}</span>
                   </TableCell>
-                  <TableCell className="text-xs text-gray-400 font-sans">{tx.date}</TableCell>
+                  <TableCell className="text-xs text-gray-400 font-sans">{new Date(tx.date).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <Badge className={`uppercase text-[9px] font-black border-0 ${
-                      tx.status === 'Verified' ? 'bg-emerald-500/10 text-emerald-400' :
-                      tx.status === 'Flagged' ? 'bg-[#EF4444]/10 text-[#EF4444]' :
+                      tx.status === 'VERIFIED' ? 'bg-emerald-500/10 text-emerald-400' :
+                      tx.status === 'FLAGGED' ? 'bg-[#EF4444]/10 text-[#EF4444]' :
                       'bg-[#FACC15]/10 text-[#FACC15]'
                     }`}>
                       {tx.status}
@@ -168,7 +184,7 @@ const Billing = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-display font-black uppercase">Receipt Verification</DialogTitle>
             <DialogDescription className="text-[#9CA3AF] text-xs font-bold uppercase">
-              Verifying payment for {selectedReceipt?.player}
+              Verifying payment for {selectedReceipt?.payerName}
             </DialogDescription>
           </DialogHeader>
           
@@ -180,8 +196,8 @@ const Billing = () => {
                 <Receipt size={64} className="text-[#FACC15] mx-auto mb-4 opacity-20" />
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#9CA3AF]">Bank Receipt Preview</p>
                 <div className="mt-4 p-4 border border-dashed border-[#1F2937] rounded-lg">
-                   <p className="text-xs font-bold text-gray-400">Transaction ID: TXN-9988223344</p>
-                   <p className="text-sm font-black text-white mt-1">Amount Verified: {selectedReceipt?.amount}</p>
+                   <p className="text-xs font-bold text-gray-400">Transaction ID: {selectedReceipt?.transactionId || 'N/A'}</p>
+                   <p className="text-sm font-black text-white mt-1">Amount Verified: ₹ {selectedReceipt?.amount}</p>
                 </div>
               </div>
             </div>
@@ -193,7 +209,7 @@ const Billing = () => {
               </div>
               <div className="p-3 bg-[#0B1220] border border-[#1F2937] rounded-lg">
                 <p className="text-[9px] font-black uppercase text-[#9CA3AF] mb-1">Submitted On</p>
-                <p className="text-xs font-bold text-white uppercase tracking-widest">{selectedReceipt?.date}</p>
+                <p className="text-xs font-bold text-white uppercase tracking-widest">{selectedReceipt?.date ? new Date(selectedReceipt.date).toLocaleDateString() : ''}</p>
               </div>
             </div>
           </div>
@@ -201,10 +217,18 @@ const Billing = () => {
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="ghost" onClick={() => setSelectedReceipt(null)} className="uppercase text-[10px] font-black text-[#9CA3AF] hover:text-white">Cancel</Button>
             <div className="flex gap-2">
-              <Button className="bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444] hover:bg-[#EF4444] hover:text-white uppercase font-black text-[10px] tracking-widest h-10 px-6 rounded-lg">
+              <Button 
+                onClick={() => selectedReceipt && updateStatusMutation.mutate({ id: selectedReceipt.id, status: 'FLAGGED' })}
+                disabled={updateStatusMutation.isPending}
+                className="bg-[#EF4444]/10 border border-[#EF4444]/20 text-[#EF4444] hover:bg-[#EF4444] hover:text-white uppercase font-black text-[10px] tracking-widest h-10 px-6 rounded-lg"
+              >
                 Flag Issue
               </Button>
-              <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] uppercase font-black text-[10px] tracking-widest h-10 px-8 rounded-lg shadow-[0_0_20px_rgba(250,204,21,0.2)]">
+              <Button 
+                onClick={() => selectedReceipt && updateStatusMutation.mutate({ id: selectedReceipt.id, status: 'VERIFIED' })}
+                disabled={updateStatusMutation.isPending}
+                className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] uppercase font-black text-[10px] tracking-widest h-10 px-8 rounded-lg shadow-[0_0_20px_rgba(250,204,21,0.2)]"
+              >
                 Confirm & Verify
               </Button>
             </div>

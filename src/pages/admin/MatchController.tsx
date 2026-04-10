@@ -1,4 +1,6 @@
+import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,12 +16,38 @@ import {
   ChevronRight,
   MoreHorizontal
 } from "lucide-react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useParams } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { matchApi } from "@/lib/api";
 
 const MatchController = () => {
+  const { id } = useParams();
+  const queryClient = useQueryClient();
   const [score, setScore] = useState({ runs: 164, wickets: 4, overs: "18.2" });
   const [currentOver, setCurrentOver] = useState(["4", "0", "1w", "6", "W", ""]);
+
+  const recordBallMutation = useMutation({
+    mutationFn: (data: any) => matchApi.recordBall(id!, data),
+    onSuccess: () => {
+      // In a real app, we'd fetch the latest match state here
+      // queryClient.invalidateQueries(['match', id]);
+    }
+  });
+
+  const handleRecordBall = (runs: number, extra: string = "", wicket: boolean = false) => {
+    // Current logic: update local state for immediate feedback
+    // Real logic: call the API
+    const ballData = {
+      runs,
+      extras: extra ? 1 : 0, // Simplified
+      wicket,
+      over: Math.floor(parseFloat(score.overs)),
+      ball: (parseFloat(score.overs) % 1).toFixed(1) || 0,
+      commentary: `${runs} runs scored.`
+    };
+    
+    recordBallMutation.mutate(ballData);
+  };
   
   const batsmen = [
     { name: "Rahul Dravid", runs: 74, balls: 45, fours: 8, sixes: 2, sr: 164.4, active: true },
@@ -27,6 +55,7 @@ const MatchController = () => {
   ];
 
   const bowler = { name: "Sunil Joshi", overs: "3.2", runs: 28, wickets: 2, econ: 8.4 };
+
 
   return (
     <AdminLayout>
@@ -105,6 +134,7 @@ const MatchController = () => {
                   {["0", "1", "2", "3", "4", "6"].map((run) => (
                     <Button 
                       key={run}
+                      onClick={() => handleRecordBall(parseInt(run))}
                       className="h-14 font-display font-black text-xl bg-[#0B1220] hover:bg-[#FACC15] hover:text-[#0B1220] border border-[#1F2937] transition-all"
                     >
                       {run}
@@ -113,13 +143,17 @@ const MatchController = () => {
                   {["WD", "NB", "LB", "B"].map((extra) => (
                     <Button 
                       key={extra}
+                      onClick={() => handleRecordBall(0, extra)}
                       className="h-14 font-black text-xs uppercase bg-[#0B1220]/50 text-[#FACC15] border border-[#FACC15]/20 hover:bg-[#FACC15] hover:text-[#0B1220] transition-all"
                     >
                       {extra}
                     </Button>
                   ))}
                 </div>
-                <Button className="w-full mt-6 h-14 bg-[#EF4444] hover:bg-[#EF4444]/90 text-white font-display font-black text-xl uppercase tracking-widest flex items-center justify-center gap-3">
+                <Button 
+                    onClick={() => handleRecordBall(0, "", true)}
+                    className="w-full mt-6 h-14 bg-[#EF4444] hover:bg-[#EF4444]/90 text-white font-display font-black text-xl uppercase tracking-widest flex items-center justify-center gap-3"
+                >
                     <Zap size={24} />
                     Wicket Out!
                 </Button>

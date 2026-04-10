@@ -27,26 +27,38 @@ import {
   TableRow 
 } from "@/components/ui/table";
 
-const trials = [
-  { id: 1, category: "U-16 District", date: "Apr 25, 2026", venue: "Police Ground", applicants: 120, status: "Active" },
-  { id: 2, category: "U-19 Selection", date: "May 02, 2026", venue: "Golf Club", applicants: 85, status: "Upcoming" },
-  { id: 3, category: "Senior Women", date: "May 10, 2026", venue: "HPT College", applicants: 45, status: "Registration Closed" },
-];
-
-const applicants = [
-  { id: 1, name: "Arjun Singh", ageGroup: "U-16", skill: "Fast Bowler", club: "Nashik Lions", status: "Pending" },
-  { id: 2, name: "Ishan Sharma", ageGroup: "U-16", skill: "Opening Batsman", club: "MCC Club", status: "Approved" },
-  { id: 3, name: "Vicky Raut", ageGroup: "U-16", skill: "Wicketkeeper", club: "City CC", status: "Rejected" },
-  { id: 4, name: "Rohit Patil", ageGroup: "U-16", skill: "Leg Spinner", club: "Nashik Road CC", status: "Pending" },
-];
-
-const auditTrail = [
-  { id: 1, action: "Applicant Approved", user: "Admin (S. Kulkarni)", target: "Ishan Sharma", time: "10 mins ago" },
-  { id: 2, action: "Applicant Rejected", user: "Admin (S. Kulkarni)", target: "Vicky Raut", time: "1 hour ago" },
-  { id: 3, action: "New Trial Created", user: "Super Admin", target: "U-19 Selection", time: "3 hours ago" },
-];
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { trialApi } from "@/lib/api";
+import { AddTrialDialog } from "@/components/admin/AddTrialDialog";
+import { toast } from "sonner";
 
 const SelectionProcess = () => {
+  const queryClient = useQueryClient();
+  const { data: trials, isLoading } = useQuery({
+    queryKey: ['trials'],
+    queryFn: async () => {
+      const response = await trialApi.getAll();
+      return response.data;
+    }
+  });
+
+  const updateRegMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string, status: string }) => 
+      trialApi.updateRegistration(id, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['trials'] });
+      toast.success("Candidate status updated.");
+    }
+  });
+
+  if (isLoading) {
+    return <AdminLayout>Loading Trials...</AdminLayout>;
+  }
+
+  const allApplicants = trials?.flatMap((t: any) => 
+    t.registrations.map((r: any) => ({ ...r, trialTitle: t.title }))
+  ) || [];
+
   return (
     <AdminLayout>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -56,10 +68,7 @@ const SelectionProcess = () => {
             Manage age-group trials and talent identification programs.
           </p>
         </div>
-        <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-widest text-xs px-6 h-12 rounded-xl">
-          <Plus size={18} className="mr-2" />
-          Create Trial Session
-        </Button>
+        <AddTrialDialog />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
@@ -104,26 +113,30 @@ const SelectionProcess = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {applicants.map((app) => (
+                      {allApplicants.map((app: any) => (
                         <TableRow key={app.id} className="border-[#1F2937] hover:bg-white/[0.02]">
                           <TableCell>
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 rounded-lg bg-[#FACC15]/10 flex items-center justify-center text-[#FACC15]">
                                 <UserCheck size={16} />
                               </div>
-                              <span className="text-sm font-bold text-white font-sans">{app.name}</span>
+                              <div>
+                                <p className="text-sm font-bold text-white font-sans">{app.player.firstName} {app.player.lastName}</p>
+                                <p className="text-[9px] text-[#9CA3AF] uppercase font-bold">{app.trialTitle}</p>
+                              </div>
                             </div>
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="border-[#1F2937] text-[#9CA3AF] text-[9px] uppercase font-black">
-                              {app.skill}
+                              {app.player.specialty || 'Player'}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-sm text-gray-300 font-sans">{app.club}</TableCell>
+                          <TableCell className="text-sm text-gray-300 font-sans">Registered</TableCell>
                           <TableCell>
                             <Badge className={`uppercase text-[9px] font-black border-0 ${
-                              app.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-400' :
-                              app.status === 'Rejected' ? 'bg-[#EF4444]/10 text-[#EF4444]' :
+                              app.status === 'SELECTED' ? 'bg-emerald-500/10 text-emerald-400' :
+                              app.status === 'REJECTED' ? 'bg-[#EF4444]/10 text-[#EF4444]' :
+                              app.status === 'SHORTLISTED' ? 'bg-blue-500/10 text-blue-400' :
                               'bg-[#FACC15]/10 text-[#FACC15]'
                             }`}>
                               {app.status}
@@ -131,12 +144,20 @@ const SelectionProcess = () => {
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
-                              <Button size="sm" className="h-8 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 uppercase text-[9px] font-black tracking-widest px-3 border-0">
-                                <CheckCircle2 size={12} className="mr-1.5" /> Approve
-                              </Button>
-                              <Button size="sm" className="h-8 bg-[#EF4444]/10 text-[#EF4444] hover:bg-[#EF4444]/20 uppercase text-[9px] font-black tracking-widest px-3 border-0">
-                                <XCircle size={12} className="mr-1.5" /> Reject
-                              </Button>
+                              {app.status === 'APPLIED' && (
+                                <>
+                                  <Button 
+                                    onClick={() => updateRegMutation.mutate({ id: app.id, status: 'SELECTED' })}
+                                    size="sm" className="h-8 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 uppercase text-[9px] font-black tracking-widest px-3 border-0">
+                                    <CheckCircle2 size={12} className="mr-1.5" /> Select
+                                  </Button>
+                                  <Button 
+                                    onClick={() => updateRegMutation.mutate({ id: app.id, status: 'REJECTED' })}
+                                    size="sm" className="h-8 bg-[#EF4444]/10 text-[#EF4444] hover:bg-[#EF4444]/20 uppercase text-[9px] font-black tracking-widest px-3 border-0">
+                                    <XCircle size={12} className="mr-1.5" /> Reject
+                                  </Button>
+                                </>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -149,22 +170,25 @@ const SelectionProcess = () => {
 
             <TabsContent value="sessions">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {trials.map((trial) => (
+                {trials?.map((trial: any) => (
                   <Card key={trial.id} className="bg-[#111827] border-[#1F2937] overflow-hidden group">
                     <CardHeader className="bg-[#0B1220]/50 border-b border-[#1F2937] p-4 flex flex-row items-center justify-between">
                       <Badge className={`uppercase text-[9px] font-black ${
-                        trial.status === 'Active' ? 'bg-emerald-500 text-white' : 'bg-[#1F2937] text-[#9CA3AF]'
+                        trial.status === 'OPEN' ? 'bg-emerald-500 text-white' : 'bg-[#1F2937] text-[#9CA3AF]'
                       }`}>
                         {trial.status}
                       </Badge>
-                      <span className="text-[10px] font-black text-[#FACC15] uppercase tracking-widest">Trial ID: TR-{trial.id}</span>
+                      <span className="text-[10px] font-black text-[#FACC15] uppercase tracking-widest">Trial ID: {trial.id.slice(0, 8)}</span>
                     </CardHeader>
                     <CardContent className="p-6">
-                      <h3 className="text-xl font-display font-black uppercase text-white mb-4 group-hover:text-[#FACC15] transition-colors">{trial.category}</h3>
+                      <h3 className="text-xl font-display font-black uppercase text-white mb-4 group-hover:text-[#FACC15] transition-colors">{trial.title}</h3>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3 text-xs text-[#9CA3AF] font-bold uppercase tracking-widest">
+                          <Badge variant="outline" className="border-[#FACC15]/20 text-[#FACC15]">{trial.ageGroup}</Badge>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-[#9CA3AF] font-bold uppercase tracking-widest">
                           <Calendar size={14} className="text-[#FACC15]" />
-                          {trial.date}
+                          {new Date(trial.date).toLocaleDateString()}
                         </div>
                         <div className="flex items-center gap-3 text-xs text-[#9CA3AF] font-bold uppercase tracking-widest">
                           <MapPin size={14} className="text-[#FACC15]" />
@@ -172,7 +196,7 @@ const SelectionProcess = () => {
                         </div>
                         <div className="flex items-center gap-3 text-xs text-[#9CA3AF] font-bold uppercase tracking-widest">
                           <Users size={14} className="text-[#FACC15]" />
-                          {trial.applicants} Registered
+                          {trial._count?.registrations || 0} Applicants
                         </div>
                       </div>
                       <Button variant="outline" className="w-full mt-6 border-[#1F2937] text-white uppercase text-[10px] font-black h-10 hover:bg-[#FACC15] hover:text-[#0B1220] transition-all">

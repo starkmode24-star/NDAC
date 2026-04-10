@@ -1,3 +1,4 @@
+import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,15 +30,26 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const players = [
-  { id: 1, name: "Rahul Dravid", club: "Nashik Lions", role: "Batsman", status: "Approved", photo: "RD" },
-  { id: 2, name: "Sunil Joshi", club: "MCC Club", role: "All-Rounder", status: "Pending", photo: "SJ" },
-  { id: 3, name: "Anil Kumble", club: "Deolali Raiders", role: "Bowler", status: "Approved", photo: "AK" },
-  { id: 4, name: "Sunil Gavaskar", club: "Nashik Lions", role: "Batsman", status: "Rejected", photo: "SG" },
-  { id: 5, name: "Kapil Dev", club: "City CC", role: "All-Rounder", status: "Approved", photo: "KD" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { playerApi } from "@/lib/api";
+
+import { AddPlayerDialog } from "@/components/admin/AddPlayerDialog";
 
 const PlayerManagement = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  const { data: players, isLoading } = useQuery({
+    queryKey: ['players', searchTerm],
+    queryFn: async () => {
+      const response = await playerApi.getAll({ search: searchTerm });
+      return response.data;
+    }
+  });
+
+  if (isLoading && !searchTerm) {
+    return <AdminLayout>Loading...</AdminLayout>;
+  }
+
   return (
     <AdminLayout>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -47,10 +59,7 @@ const PlayerManagement = () => {
             Manage association player registrations and profiles.
           </p>
         </div>
-        <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-widest text-xs px-6 h-12 rounded-xl shadow-[0_0_20px_rgba(250,204,21,0.2)] group">
-          <Plus size={18} className="mr-2 group-hover:rotate-90 transition-transform" />
-          Add New Player
-        </Button>
+        <AddPlayerDialog />
       </div>
 
       <Card className="bg-[#111827] border-[#1F2937] overflow-hidden">
@@ -59,7 +68,9 @@ const PlayerManagement = () => {
             <div className="relative w-full md:w-96 group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF] group-focus-within:text-[#FACC15] transition-colors" />
               <Input 
-                placeholder="Search by name, club or role..." 
+                placeholder="Search by name..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-[#0B1220] border-[#1F2937] pl-10 h-10 text-white focus-visible:ring-[#FACC15]/30 placeholder:text-[#9CA3AF]/40 rounded-lg font-sans text-sm"
               />
             </div>
@@ -86,45 +97,45 @@ const PlayerManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {players.map((player) => (
+              {players?.map((player: any) => (
                 <TableRow key={player.id} className="border-[#1F2937] hover:bg-white/[0.02] transition-colors group">
                   <TableCell className="py-4">
                     <div className="flex items-center gap-4">
                       <Avatar className="h-10 w-10 border border-[#FACC15]/20 group-hover:border-[#FACC15]/50 transition-colors">
                         <AvatarImage src="" />
-                        <AvatarFallback className="bg-[#0B1220] text-[#FACC15] font-bold text-xs">{player.photo}</AvatarFallback>
+                        <AvatarFallback className="bg-[#0B1220] text-[#FACC15] font-bold text-xs">{player.firstName[0]}{player.lastName[0]}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-bold text-white font-sans">{player.name}</p>
-                        <p className="text-[10px] text-[#9CA3AF] uppercase font-bold tracking-widest">ID: NDCA-2025-{player.id.toString().padStart(3, '0')}</p>
+                        <p className="text-sm font-bold text-white font-sans">{player.firstName} {player.lastName}</p>
+                        <p className="text-[10px] text-[#9CA3AF] uppercase font-bold tracking-widest">ID: NDCA-2025-{player.id.toString().slice(-3)}</p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Building2 size={14} className="text-[#FACC15]" />
-                      <span className="text-sm text-gray-300 font-sans">{player.club}</span>
+                      <span className="text-sm text-gray-300 font-sans">{player.club?.name || 'Unassigned'}</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="border-[#1F2937] text-[#9CA3AF] bg-[#0B1220] text-[10px] uppercase font-black">
-                      {player.role}
+                      {player.specialty || 'General'}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {player.status === "Approved" && (
+                    {player.status === "APPROVED" && (
                       <div className="flex items-center gap-1.5 text-emerald-400">
                         <CheckCircle2 size={14} />
                         <span className="text-[10px] font-black uppercase tracking-widest font-sans">Approved</span>
                       </div>
                     )}
-                    {player.status === "Pending" && (
+                    {player.status === "PENDING" && (
                       <div className="flex items-center gap-1.5 text-[#FACC15]">
                         <Clock size={14} />
                         <span className="text-[10px] font-black uppercase tracking-widest font-sans">Pending</span>
                       </div>
                     )}
-                    {player.status === "Rejected" && (
+                    {player.status === "REJECTED" && (
                       <div className="flex items-center gap-1.5 text-[#EF4444]">
                         <XCircle size={14} />
                         <span className="text-[10px] font-black uppercase tracking-widest font-sans">Rejected</span>

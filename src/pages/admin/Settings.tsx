@@ -21,7 +21,40 @@ import {
   Cloud
 } from "lucide-react";
 
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { settingsApi } from "@/lib/api";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+
 const Settings = () => {
+  const [siteConfig, setSiteConfig] = useState({
+    associationName: "Nashik District Cricket Association",
+    email: "admin@ndca.org.in",
+    address: "Tennis Court, Nashik Golf Club, Nashik",
+    prefix: "NDCA-REG-"
+  });
+
+  const { data: remoteConfig, isLoading } = useQuery({
+    queryKey: ['settings', 'site_config'],
+    queryFn: async () => {
+      const resp = await settingsApi.get('site_config');
+      return resp.data;
+    }
+  });
+
+  useEffect(() => {
+    if (remoteConfig && Object.keys(remoteConfig).length > 0) {
+      setSiteConfig(remoteConfig);
+    }
+  }, [remoteConfig]);
+
+  const saveMutation = useMutation({
+    mutationFn: (data: any) => settingsApi.set('site_config', data),
+    onSuccess: () => {
+      toast.success("Settings saved to database");
+    }
+  });
+
   return (
     <AdminLayout>
       <div className="mb-8">
@@ -59,23 +92,44 @@ const Settings = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Association Name</Label>
-                <Input defaultValue="Nashik District Cricket Association" className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" />
+                <Input 
+                  value={siteConfig.associationName} 
+                  onChange={e => setSiteConfig({...siteConfig, associationName: e.target.value})}
+                  className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" 
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Contact Email</Label>
-                <Input defaultValue="admin@ndca.org.in" className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" />
+                <Input 
+                  value={siteConfig.email} 
+                  onChange={e => setSiteConfig({...siteConfig, email: e.target.value})}
+                  className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" 
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Headquarters Address</Label>
-                <Input defaultValue="Tennis Court, Nashik Golf Club, Nashik" className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" />
+                <Input 
+                  value={siteConfig.address} 
+                  onChange={e => setSiteConfig({...siteConfig, address: e.target.value})}
+                  className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" 
+                />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Registration Prefix</Label>
-                <Input defaultValue="NDCA-REG-" className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" />
+                <Input 
+                  value={siteConfig.prefix} 
+                  onChange={e => setSiteConfig({...siteConfig, prefix: e.target.value})}
+                  className="bg-[#0B1220] border-[#1F2937] text-white focus-visible:ring-[#FACC15]/20" 
+                />
               </div>
             </div>
             <div className="mt-8 flex justify-end">
-              <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase text-[10px] px-8 h-10 tracking-[0.2em] rounded-lg">Save Configuration</Button>
+              <Button 
+                onClick={() => saveMutation.mutate(siteConfig)}
+                className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase text-[10px] px-8 h-10 tracking-[0.2em] rounded-lg"
+              >
+                {saveMutation.isPending ? "Syncing..." : "Save Configuration"}
+              </Button>
             </div>
           </SectionCard>
 

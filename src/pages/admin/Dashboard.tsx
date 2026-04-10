@@ -2,7 +2,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trophy, Users, Building2, Clock, ArrowUpRight, TrendingUp } from "lucide-react";
+import { Trophy, Users, Building2, Clock, ArrowUpRight, TrendingUp, Loader2 } from "lucide-react";
 import { 
   AreaChart, 
   Area, 
@@ -13,42 +13,44 @@ import {
   ResponsiveContainer 
 } from 'recharts';
 
-const data = [
-  { name: 'Mon', score: 4000 },
-  { name: 'Tue', score: 3000 },
-  { name: 'Wed', score: 5000 },
-  { name: 'Thu', score: 2780 },
-  { name: 'Fri', score: 1890 },
-  { name: 'Sat', score: 2390 },
-  { name: 'Sun', score: 3490 },
-];
-
-const stats = [
-  { label: "Total Players", value: "2,543", icon: Users, trend: "+12.5%", color: "text-[#FACC15]" },
-  { label: "Active Clubs", value: "48", icon: Building2, trend: "+4.2%", color: "text-blue-400" },
-  { label: "Matches Today", value: "12", icon: Trophy, trend: "Live Now", color: "text-[#EF4444]" },
-  { label: "Pending Approvals", value: "15", icon: Clock, trend: "-2.1%", color: "text-amber-400" },
-];
-
-const recentActivity = [
-  { id: 1, type: 'Registration', title: 'New Club: Nashik Warriors', time: '2 hours ago', status: 'Pending' },
-  { id: 2, type: 'MatchResult', title: 'Kandhar CC won by 4 wickets', time: '5 hours ago', status: 'Final' },
-  { id: 3, type: 'PlayerUpdate', title: 'Profile update: Sachin Tendulkar', time: '1 day ago', status: 'Approved' },
-];
+import { useQuery } from "@tanstack/react-query";
+import { dashboardApi } from "@/lib/api";
 
 const Dashboard = () => {
+  const { data: statsData, isLoading } = useQuery({
+    queryKey: ['dashboardStats'],
+    queryFn: async () => {
+      const response = await dashboardApi.getStats();
+      return response.data;
+    }
+  });
+
+  if (isLoading) {
+    return <AdminLayout><div className="flex justify-center py-20"><Loader2 className="animate-spin text-[#FACC15]" size={40} /></div></AdminLayout>;
+  }
+
+  const statsList = [
+    { label: "Total Players", value: statsData?.totalPlayers || 0, icon: Users, trend: "Overall", color: "text-[#FACC15]" },
+    { label: "Active Clubs", value: statsData?.activeClubs || 0, icon: Building2, trend: "Approved", color: "text-blue-400" },
+    { label: "Matches Today", value: statsData?.matchesToday || 0, icon: Trophy, trend: "Today", color: "text-[#EF4444]" },
+    { label: "Pending Approvals", value: statsData?.pendingApprovals || 0, icon: Clock, trend: "Action Required", color: "text-amber-400" },
+  ];
+
+  const recentLogs = statsData?.recentActivity || [];
+  const chartData = statsData?.trafficData || [];
+
   return (
     <AdminLayout>
       <div className="mb-8">
         <h1 className="text-4xl font-display font-black uppercase tracking-tight text-white">Dashboard Overview</h1>
         <p className="text-[#9CA3AF] text-sm font-bold uppercase tracking-widest mt-1">
-          Welcome back, Admin. System monitoring active.
+          Welcome back, Admin. System monitoring active. Direct Database Sync Enabled.
         </p>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, i) => (
+        {statsList.map((stat, i) => (
           <Card key={stat.label} className="bg-[#111827] border-[#1F2937] hover:border-[#FACC15]/30 transition-all group animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
@@ -81,7 +83,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="pt-4 h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data}>
+              <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#FACC15" stopOpacity={0.3}/>
@@ -128,19 +130,22 @@ const Dashboard = () => {
             <CardDescription className="text-xs text-[#9CA3AF] font-bold uppercase">System-wide event tracking</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {recentActivity.map((activity, i) => (
+            {recentLogs.length === 0 && (
+              <p className="text-[#9CA3AF] text-xs font-bold uppercase py-4">No recent activity.</p>
+            )}
+            {recentLogs.map((activity: any, i: number) => (
               <div key={activity.id} className="flex gap-4 group animate-fade-in" style={{ animationDelay: `${i * 0.15 + 0.5}s` }}>
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-[#0B1220] border border-[#1F2937] flex items-center justify-center text-[#FACC15] group-hover:border-[#FACC15]/50 transition-colors">
                     <ArrowUpRight size={18} />
                   </div>
-                  {i !== recentActivity.length - 1 && (
+                  {i !== recentLogs.length - 1 && (
                     <div className="absolute top-10 left-1/2 -translate-x-1/2 w-0.5 h-6 bg-[#1F2937]" />
                   )}
                 </div>
                 <div>
                   <p className="text-sm font-bold text-white font-sans">{activity.title}</p>
-                  <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest mt-0.5">{activity.time} • {activity.type}</p>
+                  <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest mt-0.5">{new Date(activity.time).toLocaleString()} • {activity.type}</p>
                   <Badge className="mt-2 bg-[#FACC15]/10 text-[#FACC15] border-0 text-[10px] font-black uppercase">
                     {activity.status}
                   </Badge>

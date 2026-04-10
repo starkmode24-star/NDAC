@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,23 +14,28 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate role-based redirection from wireframe
-    setTimeout(() => {
+    try {
+      const response = await authApi.login({ email, password });
+      const { token, user } = response.data;
+      
+      localStorage.setItem('ndca_token', token);
+      localStorage.setItem('ndca_user', JSON.stringify(user));
+      
       setIsLoading(false);
-      // Logic from wireframe:
-      // Super Admin -> /admin
-      // Club Admin -> /app
-      // Player -> /app
-      if (email.includes("admin")) {
+      
+      if (user.role === 'SUPER_ADMIN') {
         navigate("/admin");
       } else {
         navigate("/");
       }
-    }, 1500);
+    } catch (error: any) {
+      setIsLoading(false);
+      alert(error.response?.data?.error || 'Login failed');
+    }
   };
 
   return (

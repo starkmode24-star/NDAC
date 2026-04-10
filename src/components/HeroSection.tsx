@@ -22,7 +22,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-[85vh] flex items-end overflow-hidden">
+    <section className="relative min-h-[85vh] flex items-center overflow-hidden">
       {/* Stadium background */}
       <div className="absolute inset-0">
         <img
@@ -73,7 +73,7 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="relative container pb-16 pt-32 z-20">
+      <div className="relative container pb-16 pt-8 z-20">
         <div className="flex flex-col lg:flex-row items-end justify-between gap-8">
           {/* Left: Match Card */}
           <div
@@ -183,7 +183,7 @@ const HeroSection = () => {
           </div>
 
           {/* Right: News Cards - staggered cascade */}
-          <div className="hidden lg:flex flex-col gap-3 w-64">
+          <div className="hidden lg:flex flex-col gap-4 w-80">
             {[
               {
                 title: "Pitch Report: How the Dry Surface Will Impact Spinners",
@@ -256,11 +256,11 @@ const MatchCard = () => (
 );
 
 const NewsCard = ({ title, image }: { title: string; image: string }) => (
-  <div className="group relative rounded-lg overflow-hidden cursor-pointer">
-    <img src={image} alt={title} className="w-full h-28 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+  <div className="group relative rounded-xl overflow-hidden cursor-pointer shadow-lg">
+    <img src={image} alt={title} className="w-full h-32 object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
-    <div className="absolute bottom-0 left-0 right-0 p-3">
-      <p className="text-[11px] font-semibold leading-tight uppercase tracking-wide">{title}</p>
+    <div className="absolute bottom-0 left-0 right-0 p-4">
+      <p className="text-[12px] font-bold leading-tight uppercase tracking-wide text-white drop-shadow-md">{title}</p>
     </div>
     <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-foreground/20 backdrop-blur flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
       <span className="text-foreground text-xs">▶</span>

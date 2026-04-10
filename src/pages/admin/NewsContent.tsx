@@ -5,37 +5,31 @@ import { Button } from "@/components/ui/button";
 import { Newspaper, Plus, Search, Edit2, Trash2, Calendar, Share2, MoreVertical } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-const newsItems = [
-  { 
-    id: 1, 
-    title: "NDCA Announces New Selection Trials for U-16 District Team", 
-    category: "Announcements", 
-    date: "Apr 12, 2026", 
-    author: "Admin", 
-    status: "Published",
-    image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&q=80&w=800"
-  },
-  { 
-    id: 2, 
-    title: "Annual Awards Night Scheduled for Next Month at Golf Club", 
-    category: "Events", 
-    date: "Apr 15, 2026", 
-    author: "Secretary", 
-    status: "Draft",
-    image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&q=80&w=800"
-  },
-  { 
-    id: 3, 
-    title: "Ground Maintenance Update: Police Ground Ready for Season", 
-    category: "Maintenance", 
-    date: "Apr 08, 2026", 
-    author: "Ground Staff", 
-    status: "Published",
-    image: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?auto=format&fit=crop&q=80&w=800"
-  },
-];
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { newsApi } from "@/lib/api";
+import { AddNewsDialog } from "@/components/admin/AddNewsDialog";
+import { toast } from "sonner";
 
 const NewsContent = () => {
+  const queryClient = useQueryClient();
+  const { data: newsItems, isLoading } = useQuery({
+    queryKey: ['news'],
+    queryFn: async () => {
+      const resp = await newsApi.getAll();
+      return resp.data;
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => newsApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['news'] });
+      toast.success("Article deleted.");
+    }
+  });
+
+  if (isLoading) return <AdminLayout>Loading Articles...</AdminLayout>;
+
   return (
     <AdminLayout>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -45,10 +39,7 @@ const NewsContent = () => {
             Publish announcements, articles and league updates.
           </p>
         </div>
-        <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-widest text-xs px-6 h-12 rounded-xl">
-          <Plus size={18} className="mr-2" />
-          New Article
-        </Button>
+        <AddNewsDialog />
       </div>
 
       <div className="flex flex-col xl:flex-row gap-8">
@@ -66,43 +57,38 @@ const NewsContent = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-6">
-            {newsItems.map((item) => (
+            {newsItems?.map((item: any) => (
               <Card key={item.id} className="bg-[#111827] border-[#1F2937] hover:border-[#FACC15]/30 transition-all group overflow-hidden">
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-64 h-48 md:h-auto overflow-hidden relative">
                     <img 
-                      src={item.image} 
+                      src={item.imageUrl || "https://placehold.co/600x400?text=No+Image"} 
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-[#0B1220]/80 backdrop-blur-md border border-white/10 text-[9px] font-black uppercase text-[#FACC15]">{item.category}</Badge>
+                      <Badge className="bg-[#0B1220]/80 backdrop-blur-md border border-white/10 text-[9px] font-black uppercase text-[#FACC15]">{item.category || "General"}</Badge>
                     </div>
                   </div>
                   <CardContent className="flex-1 p-6 flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="text-xl font-display font-black uppercase text-white leading-tight group-hover:text-[#FACC15] transition-colors">{item.title}</h3>
-                        <Button variant="ghost" size="icon" className="text-[#9CA3AF] hover:text-white shrink-0">
-                          <MoreVertical size={18} />
-                        </Button>
                       </div>
                       <div className="flex items-center gap-4 text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest">
-                        <span className="flex items-center gap-1.5"><Calendar size={12} className="text-[#FACC15]" /> {item.date}</span>
-                        <span>By {item.author}</span>
+                        <span className="flex items-center gap-1.5"><Calendar size={12} className="text-[#FACC15]" /> {new Date(item.publishedAt).toLocaleDateString()}</span>
+                        <span>By Admin</span>
                       </div>
+                      <p className="mt-4 text-xs text-gray-400 line-clamp-2 font-sans">{item.content}</p>
                     </div>
                     <div className="mt-6 flex justify-between items-center">
-                      <Badge className={`uppercase text-[9px] font-black tracking-widest border-0 ${
-                        item.status === 'Published' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
-                      }`}>
-                        {item.status}
+                      <Badge className="uppercase text-[9px] font-black tracking-widest border-0 bg-emerald-500/10 text-emerald-400">
+                        Published
                       </Badge>
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" className="h-8 px-3 text-[10px] font-black uppercase text-[#9CA3AF] hover:text-white hover:bg-white/5">
-                          <Edit2 size={14} className="mr-2" /> Edit
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-8 px-3 text-[10px] font-black uppercase text-[#9CA3AF] hover:text-[#EF4444] hover:bg-[#EF4444]/10">
+                        <Button 
+                          onClick={() => deleteMutation.mutate(item.id)}
+                          variant="ghost" size="sm" className="h-8 px-3 text-[10px] font-black uppercase text-[#9CA3AF] hover:text-[#EF4444] hover:bg-[#EF4444]/10">
                           <Trash2 size={14} className="mr-2" /> Delete
                         </Button>
                       </div>

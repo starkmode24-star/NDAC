@@ -5,14 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Building2, Users, MapPin, Plus, CheckCircle2, MoreVertical, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-const clubs = [
-  { id: 1, name: "Nashik Lions CC", location: "Nashik City", players: 42, founded: "1992", status: "Active" },
-  { id: 2, name: "MCC Cricket Academy", location: "Deolali", players: 128, founded: "2005", status: "Active" },
-  { id: 3, name: "City Warriors", location: "Nashik Road", players: 35, founded: "2015", status: "Pending" },
-  { id: 4, name: "Eagle Sports Club", location: "Malegaon", players: 56, founded: "1998", status: "Active" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { clubApi } from "@/lib/api";
+import { AddClubDialog } from "@/components/admin/AddClubDialog";
 
 const ClubManagement = () => {
+  const { data: clubs, isLoading } = useQuery({
+    queryKey: ['clubs'],
+    queryFn: async () => {
+      const response = await clubApi.getAll();
+      return response.data;
+    }
+  });
+
+  if (isLoading) {
+    return <AdminLayout>Loading Clubs...</AdminLayout>;
+  }
+
   return (
     <AdminLayout>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -22,10 +31,7 @@ const ClubManagement = () => {
             Manage all affiliated cricket clubs and training academies.
           </p>
         </div>
-        <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-widest text-xs px-6 h-12 rounded-xl">
-          <Plus size={18} className="mr-2" />
-          Register New Club
-        </Button>
+        <AddClubDialog />
       </div>
 
       <div className="flex items-center gap-4 mb-8">
@@ -42,7 +48,7 @@ const ClubManagement = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clubs.map((club) => (
+        {clubs?.map((club: any) => (
           <Card key={club.id} className="bg-[#111827] border-[#1F2937] hover:border-[#FACC15]/30 transition-all group">
             <CardHeader className="p-6 pb-0 flex flex-row justify-between items-start">
               <div className="w-16 h-16 rounded-2xl bg-[#0B1220] border border-[#1F2937] flex items-center justify-center text-[#FACC15] group-hover:scale-110 transition-transform">
@@ -57,7 +63,7 @@ const ClubManagement = () => {
                 <h3 className="text-xl font-display font-black uppercase text-white mb-1">{club.name}</h3>
                 <p className="flex items-center gap-1.5 text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest">
                   <MapPin size={12} className="text-[#FACC15]" />
-                  {club.location}
+                  {club.location || 'Nashik District'}
                 </p>
               </div>
 
@@ -66,20 +72,18 @@ const ClubManagement = () => {
                   <p className="text-[10px] font-black uppercase tracking-tighter text-[#9CA3AF] mb-1">Players</p>
                   <div className="flex items-center gap-2">
                     <Users size={14} className="text-[#FACC15]" />
-                    <span className="text-sm font-bold text-white font-sans">{club.players}</span>
+                    <span className="text-sm font-bold text-white font-sans">{club.players?.length || 0}</span>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-tighter text-[#9CA3AF] mb-1">Founded</p>
-                  <p className="text-sm font-bold text-white font-sans">{club.founded}</p>
+                  <p className="text-[10px] font-black uppercase tracking-tighter text-[#9CA3AF] mb-1">Status</p>
+                  <p className="text-sm font-bold text-white font-sans">Active</p>
                 </div>
               </div>
 
               <div className="mt-6 flex justify-between items-center">
-                <Badge variant="outline" className={`border-0 uppercase text-[10px] font-black tracking-widest h-7 px-3 ${
-                  club.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
-                }`}>
-                  {club.status}
+                <Badge variant="outline" className="border-0 uppercase text-[10px] font-black tracking-widest h-7 px-3 bg-emerald-500/10 text-emerald-400">
+                  Verified
                 </Badge>
                 <Button variant="outline" className="border-[#1F2937] bg-transparent text-[#9CA3AF] hover:text-white hover:bg-white/5 uppercase text-[10px] font-black tracking-widest h-8">
                   Manage Academy
