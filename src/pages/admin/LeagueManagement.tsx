@@ -2,17 +2,6 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trophy, Calendar, Users, ArrowUpRight, Plus, MapPin, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-import { useQuery } from "@tanstack/react-query";
-import { leagueApi } from "@/lib/api";
-
-import AdminLayout from "@/components/admin/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Trophy, Calendar, Users, ArrowUpRight, Plus, MapPin, Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
