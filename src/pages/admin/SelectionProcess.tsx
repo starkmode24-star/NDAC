@@ -221,7 +221,11 @@ const SelectionProcess = () => {
               <CardDescription className="text-[10px] font-bold uppercase text-[#9CA3AF]">Recent selection logs</CardDescription>
             </CardHeader>
             <CardContent className="p-4 space-y-6">
-              {auditTrail.map((log) => (
+              {[
+                { id: 1, action: "Player Approved", target: "Rahul Sharma", user: "Admin", time: "2 mins ago" },
+                { id: 2, action: "Trial Created", target: "U-19 Fast Bowling", user: "Coach", time: "1 hour ago" },
+                { id: 3, action: "Player Rejected", target: "Amit Patel", user: "Selector", time: "3 hours ago" },
+              ].map((log, idx, arr) => (
                 <div key={log.id} className="relative group">
                   <div className="flex gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#FACC15] mt-1.5 shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
@@ -234,7 +238,7 @@ const SelectionProcess = () => {
                       </p>
                     </div>
                   </div>
-                  {log.id !== auditTrail.length && (
+                  {log.id !== arr.length && (
                     <div className="absolute left-[2.5px] top-6 bottom-[-24px] w-[1px] bg-[#1F2937]" />
                   )}
                 </div>
