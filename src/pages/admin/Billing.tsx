@@ -95,7 +95,7 @@ const Billing = () => {
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <div className={`p-3 rounded-xl bg-[#0B1220] ${stat.color}`}>
-                  <stat.icon size={22} />
+                  <stat.icon size={22} className={stat.color} />
                 </div>
                 <Badge className="bg-white/5 border-0 text-[9px] font-black uppercase text-[#9CA3AF]">
                   {stat.trend}
