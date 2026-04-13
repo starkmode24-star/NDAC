@@ -41,15 +41,15 @@ router.post('/', async (req: Request, res: Response) => {
 router.get('/:id/standings', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const matches = await prisma.match.findMany({
-      where: { leagueId: id, status: 'COMPLETED' },
+    const matches = await (prisma.match as any).findMany({
+      where: { leagueId: id as string, status: 'COMPLETED' },
       include: { team1: true, team2: true }
     });
 
     const standingsMap: Record<string, any> = {};
 
-    matches.forEach(m => {
-      [m.team1, m.team2].forEach(team => {
+    matches.forEach((m: any) => {
+      [m.team1, m.team2].forEach((team: any) => {
         if (!standingsMap[team.id]) {
           standingsMap[team.id] = { id: team.id, name: team.name, p: 0, w: 0, l: 0, pts: 0 };
         }

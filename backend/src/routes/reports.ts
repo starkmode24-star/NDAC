@@ -11,13 +11,13 @@ router.get('/export/:type', async (req: Request, res: Response) => {
     let headers: string[] = [];
 
     if (type === 'players') {
-      data = await prisma.player.findMany({ include: { club: true } });
+      data = await (prisma.player as any).findMany({ include: { club: true } });
       headers = ['ID', 'First Name', 'Last Name', 'DOB', 'Club', 'Status'];
     } else if (type === 'clubs') {
-      data = await prisma.club.findMany();
+      data = await (prisma.club as any).findMany();
       headers = ['ID', 'Name', 'Status', 'Created At'];
     } else if (type === 'matches') {
-      data = await prisma.match.findMany({ include: { team1: true, team2: true } });
+      data = await (prisma.match as any).findMany({ include: { team1: true, team2: true } });
       headers = ['ID', 'Team 1', 'Team 2', 'Venue', 'Date', 'Status'];
     }
 

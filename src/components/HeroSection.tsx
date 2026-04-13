@@ -205,7 +205,11 @@ const HeroSection = () => {
 
             {/* CTAs with skewed/bold style */}
             <div
+<<<<<<< HEAD
               className="mt-8 flex flex-wrap gap-4"
+=======
+              className="mt-8 flex flex-wrap gap-5 transition-all duration-600"
+>>>>>>> 8c50e00 (UI/UX Enhancements & Rebranding: Premium card system, live match indicators, enhanced CTA buttons, and NDAC branding transition. Fixed backend type errors and frontend rendering crashes.)
               style={{
                 opacity: stage >= 10 ? 1 : 0,
                 transform: stage >= 10 ? "translateY(0)" : "translateY(30px)",
@@ -214,22 +218,35 @@ const HeroSection = () => {
             >
               <a
                 href="#watch"
+<<<<<<< HEAD
                 className="group inline-flex items-center px-8 py-3.5 bg-primary text-primary-foreground font-display text-sm font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition-all duration-300 shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:scale-105"
+=======
+                className="inline-flex items-center px-10 py-4 bg-primary text-primary-foreground font-display text-base font-black uppercase tracking-widest rounded-lg btn-premium animate-glow-pulse"
+>>>>>>> 8c50e00 (UI/UX Enhancements & Rebranding: Premium card system, live match indicators, enhanced CTA buttons, and NDAC branding transition. Fixed backend type errors and frontend rendering crashes.)
               >
                 <span className="mr-2">▶</span>
                 Watch Live Scores
               </a>
               <a
                 href="#updates"
+<<<<<<< HEAD
                 className="inline-flex items-center px-8 py-3.5 border-2 border-foreground/25 text-foreground font-display text-sm font-bold uppercase tracking-wider rounded-lg hover:bg-foreground/10 hover:border-foreground/40 transition-all duration-300 hover:scale-105"
+=======
+                className="inline-flex items-center px-10 py-4 border-2 border-foreground/50 text-foreground font-display text-base font-black uppercase tracking-widest rounded-lg hover:bg-foreground/10 transition-all duration-300"
+>>>>>>> 8c50e00 (UI/UX Enhancements & Rebranding: Premium card system, live match indicators, enhanced CTA buttons, and NDAC branding transition. Fixed backend type errors and frontend rendering crashes.)
               >
                 Get Latest Updates
               </a>
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* Right: News Cards */}
           <div className="hidden lg:flex flex-col gap-5 w-80">
+=======
+          {/* Right: News Cards - staggered cascade */}
+          <div className="hidden lg:flex flex-col gap-4 w-80 -mt-72 self-start lg:self-center">
+>>>>>>> 8c50e00 (UI/UX Enhancements & Rebranding: Premium card system, live match indicators, enhanced CTA buttons, and NDAC branding transition. Fixed backend type errors and frontend rendering crashes.)
             {[
               {
                 title: "Pitch Report: How the Dry Surface Will Impact Spinners",
