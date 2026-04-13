@@ -17,40 +17,73 @@ const FeaturesSection = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section id="features" className="py-24 relative" ref={ref}>
+    <section id="features" className="py-28 relative overflow-hidden" ref={ref}>
+      {/* Cinematic background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-navy-light/30 to-background" />
+      
+      {/* Floating orbs */}
+      <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-primary/5 blur-[100px] animate-float" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-primary/3 blur-[120px] animate-float" style={{ animationDelay: "1.5s" }} />
+
       <div className="container relative">
-        <div className="text-center mb-16">
-          <span className="text-xs uppercase tracking-widest text-primary font-semibold">Why Choose Us</span>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase mt-3">
+        {/* Section header with dramatic reveal */}
+        <div className="text-center mb-20">
+          <span
+            className={`inline-block text-xs uppercase tracking-[0.3em] text-primary font-bold mb-4 ${visible ? "animate-fade-up" : "opacity-0"}`}
+          >
+            Why Choose Us
+          </span>
+          <h2
+            className={`font-display text-5xl sm:text-6xl lg:text-7xl font-extrabold uppercase leading-[0.95] ${visible ? "animate-reveal-up" : "opacity-0"}`}
+            style={{ animationDelay: "0.15s" }}
+          >
             Everything You Need
           </h2>
-          <p className="text-muted-foreground mt-3 max-w-lg mx-auto text-sm">
+          <div
+            className={`w-24 h-1 bg-primary mx-auto mt-6 rounded-full ${visible ? "animate-fade-up" : "opacity-0"}`}
+            style={{ animationDelay: "0.3s" }}
+          />
+          <p
+            className={`text-muted-foreground mt-6 max-w-lg mx-auto text-sm leading-relaxed ${visible ? "animate-fade-up" : "opacity-0"}`}
+            style={{ animationDelay: "0.4s" }}
+          >
             One platform for all your sports entertainment needs—built for fans who never want to miss a moment.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Feature cards with 3D hover and staggered reveal */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((f, i) => (
             <div
               key={f.title}
-              className={`group glass rounded-xl p-6 hover:border-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 ${
-                visible ? "animate-fade-up" : "opacity-0"
+              className={`group relative glass rounded-xl p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 animate-border-glow ${
+                visible ? "animate-reveal-up" : "opacity-0"
               }`}
-              style={{ animationDelay: `${i * 0.1}s` }}
+              style={{
+                animationDelay: `${0.1 + i * 0.12}s`,
+                perspective: "1000px",
+              }}
             >
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <f.icon size={22} className="text-primary" />
+              {/* Hover glow effect */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              {/* Icon with animated border */}
+              <div className="relative w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:border-primary/40 group-hover:glow-gold transition-all duration-500 group-hover:scale-110">
+                <f.icon size={24} className="text-primary transition-transform duration-500 group-hover:scale-110" />
               </div>
-              <h3 className="font-display text-lg font-bold uppercase mb-2">{f.title}</h3>
+
+              <h3 className="font-display text-xl font-bold uppercase mb-3 group-hover:text-primary transition-colors duration-300">{f.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+
+              {/* Bottom accent line */}
+              <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </div>
           ))}
         </div>
