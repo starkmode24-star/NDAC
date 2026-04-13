@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../index';
+import { authenticate } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 
 const router = Router();
 
@@ -16,8 +18,8 @@ router.get('/:key', async (req: Request, res: Response) => {
   }
 });
 
-// Update settings
-router.post('/:key', async (req: Request, res: Response) => {
+// Update settings (SuperAdmin only)
+router.post('/:key', authenticate, authorize('SUPER_ADMIN'), async (req: Request, res: Response) => {
   try {
     const { key } = req.params;
     const value = JSON.stringify(req.body);

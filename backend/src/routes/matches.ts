@@ -1,9 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { prisma, io } from '../index';
+import { authenticate } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 
 const router = Router();
 
-// Get all matches
+// Get all matches (Public)
 router.get('/', async (req: Request, res: Response) => {
   try {
     const matches = await prisma.match.findMany({
@@ -15,8 +17,8 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// Create a match
-router.post('/', async (req: Request, res: Response) => {
+// Create a match (SuperAdmin only)
+router.post('/', authenticate, authorize('SUPER_ADMIN'), async (req: Request, res: Response) => {
   try {
     const { team1Id, team2Id, leagueId, date, venue, matchType } = req.body;
     const match = await prisma.match.create({
@@ -36,8 +38,8 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Update match score (simplified)
-router.post('/:id/score', async (req: Request, res: Response) => {
+// Update match score (SuperAdmin only)
+router.post('/:id/score', authenticate, authorize('SUPER_ADMIN'), async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { team1Score, team2Score, result } = req.body;
@@ -60,8 +62,8 @@ router.post('/:id/score', async (req: Request, res: Response) => {
   }
 });
 
-// Add a delivery (Ball-by-Ball)
-router.post('/:id/ball', async (req: Request, res: Response) => {
+// Add a delivery (SuperAdmin only)
+router.post('/:id/ball', authenticate, authorize('SUPER_ADMIN'), async (req: Request, res: Response) => {
   try {
     const { id: matchId } = req.params;
     const { inningsId, over, ball, runs, extras, wicket, batterId, bowlerId, commentary } = req.body;

@@ -1,9 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../index';
+import { authenticate } from '../middleware/auth';
+import { authorize } from '../middleware/authorize';
 
 const router = Router();
 
-// Get all leagues
+// Get all leagues (Public)
 router.get('/', async (req: Request, res: Response) => {
   try {
     const leagues = await prisma.league.findMany({
@@ -19,8 +21,8 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// Create a league
-router.post('/', async (req: Request, res: Response) => {
+// Create a league (SuperAdmin only)
+router.post('/', authenticate, authorize('SUPER_ADMIN'), async (req: Request, res: Response) => {
   try {
     const { name, startDate, endDate, season } = req.body;
     const league = await prisma.league.create({

@@ -26,9 +26,22 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Generate token
+    // Generate token payload
+    let clubId = undefined;
+    if (user.role === 'CLUB_ADMIN') {
+      const club = await prisma.club.findUnique({
+        where: { adminId: user.id }
+      });
+      clubId = club?.id;
+    } else if (user.role === 'PLAYER') {
+      const player = await prisma.player.findUnique({
+        where: { userId: user.id }
+      });
+      clubId = player?.clubId;
+    }
+
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
+      { userId: user.id, role: user.role, clubId },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -39,6 +52,7 @@ router.post('/login', async (req: Request, res: Response) => {
         id: user.id,
         email: user.email,
         role: user.role,
+        clubId
       }
     });
   } catch (error) {
