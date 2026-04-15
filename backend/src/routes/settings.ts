@@ -8,7 +8,7 @@ const router = Router();
 // Get settings by key
 router.get('/:key', async (req: Request, res: Response) => {
   try {
-    const { key } = req.params;
+    const key = String(req.params.key);
     const setting = await prisma.setting.findUnique({
       where: { key }
     });
@@ -21,7 +21,7 @@ router.get('/:key', async (req: Request, res: Response) => {
 // Update settings (SuperAdmin only)
 router.post('/:key', authenticate, authorize('SUPER_ADMIN'), async (req: Request, res: Response) => {
   try {
-    const { key } = req.params;
+    const key = String(req.params.key);
     const value = JSON.stringify(req.body);
     const setting = await prisma.setting.upsert({
       where: { key },

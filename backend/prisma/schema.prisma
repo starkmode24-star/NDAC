@@ -23,6 +23,7 @@ model User {
 model Club {
   id          String   @id @default(uuid())
   name        String
+  location    String?
   adminId     String?  @unique
   admin       User?    @relation("ClubAdmin", fields: [adminId], references: [id])
   status      String   @default("PENDING")

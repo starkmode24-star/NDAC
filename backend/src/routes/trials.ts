@@ -44,7 +44,7 @@ router.post('/', authenticate, authorize('SUPER_ADMIN'), async (req: Request, re
 // Register a player for a trial (Player or ClubAdmin)
 router.post('/:id/register', authenticate, authorize('SUPER_ADMIN', 'CLUB_ADMIN', 'PLAYER'), async (req: Request, res: Response) => {
   try {
-    const { id: trialId } = req.params;
+    const trialId = req.params.id as string;
     const { playerId } = req.body;
     
     // Ownership check for CLUB_ADMIN/PLAYER
@@ -57,7 +57,7 @@ router.post('/:id/register', authenticate, authorize('SUPER_ADMIN', 'CLUB_ADMIN'
 
     const registration = await prisma.trialRegistration.create({
       data: {
-        trialId: String(trialId),
+        trialId,
         playerId: String(playerId),
         status: 'APPLIED'
       }
@@ -71,11 +71,11 @@ router.post('/:id/register', authenticate, authorize('SUPER_ADMIN', 'CLUB_ADMIN'
 // Update registration status (SuperAdmin only)
 router.patch('/registration/:regId', authenticate, authorize('SUPER_ADMIN'), async (req: Request, res: Response) => {
   try {
-    const { regId } = req.params;
+    const regId = req.params.regId as string;
     const { status, performanceNotes } = req.body;
     
     const updated = await prisma.trialRegistration.update({
-      where: { id: String(regId) },
+      where: { id: regId },
       data: { 
         status,
         performanceNotes

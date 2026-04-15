@@ -28,6 +28,7 @@ export const playerApi = {
   create: (data: any) => api.post('/players', data),
   update: (id: string, data: any) => api.put(`/players/${id}`, data),
   approve: (id: string) => api.post(`/players/${id}/approve`),
+  delete: (id: string) => api.delete(`/players/${id}`),
 };
 
 export const clubApi = {
@@ -103,6 +104,10 @@ export const settingsApi = {
 
 export const reportApi = {
   getDownloadUrl: (type: string) => `${API_BASE_URL}/reports/export/${type}`,
+};
+
+export const broadcastApi = {
+  send: (data: any) => api.post('/broadcast', data),
 };
 
 export default api;

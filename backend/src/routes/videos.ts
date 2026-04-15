@@ -37,7 +37,7 @@ router.post('/', async (req: Request, res: Response) => {
 // Delete video
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     await prisma.video.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {

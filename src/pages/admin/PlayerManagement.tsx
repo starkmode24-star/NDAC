@@ -26,28 +26,53 @@ import {
   TrendingUp,
   ArrowDownRight,
   Printer,
-  Users
+  Users,
+  Loader2
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { playerApi } from "@/lib/api";
+import { toast } from "sonner";
 
 import { AddPlayerDialog } from "@/components/admin/AddPlayerDialog";
 
 const PlayerManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  
+  const queryClient = useQueryClient();
+
   const { data: players, isLoading } = useQuery({
-    queryKey: ['players', searchTerm],
+    queryKey: ['players'],
     queryFn: async () => {
-      const response = await playerApi.getAll({ search: searchTerm });
-      return response.data;
+      const resp = await playerApi.getAll();
+      return resp.data;
+    }
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: (id: string) => playerApi.approve(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['players'] });
+      toast.success("Player approved successfully!");
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => playerApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['players'] });
+      toast.success("Player data removed.");
     }
   });
 
   if (isLoading && !searchTerm) {
-    return <AdminLayout>Loading...</AdminLayout>;
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="animate-spin text-primary h-8 w-8" />
+        </div>
+      </AdminLayout>
+    );
   }
 
   return (
@@ -113,8 +138,8 @@ const PlayerManagement = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Building2 size={14} className="text-[#FACC15]" />
-                      <span className="text-sm text-gray-300 font-sans">{player.club?.name || 'Unassigned'}</span>
+                       <Building2 size={14} className="text-[#FACC15]" />
+                       <span className="text-sm text-gray-300 font-sans">{player.club?.name || 'Unassigned'}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -135,23 +160,29 @@ const PlayerManagement = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest font-sans">Pending</span>
                       </div>
                     )}
-                    {player.status === "REJECTED" && (
-                      <div className="flex items-center gap-1.5 text-[#EF4444]">
-                        <XCircle size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-widest font-sans">Rejected</span>
-                      </div>
-                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
+                      {player.status === "PENDING" && (
+                        <Button 
+                            onClick={() => approveMutation.mutate(player.id)}
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-[#9CA3AF] hover:text-emerald-400 hover:bg-emerald-400/10 rounded-lg"
+                        >
+                            <CheckCircle2 size={16} />
+                        </Button>
+                      )}
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-[#9CA3AF] hover:text-[#FACC15] hover:bg-[#FACC15]/10 rounded-lg">
                         <Edit size={16} />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-[#9CA3AF] hover:text-[#EF4444] hover:bg-[#EF4444]/10 rounded-lg">
+                      <Button 
+                        onClick={() => deleteMutation.mutate(player.id)}
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-[#9CA3AF] hover:text-[#EF4444] hover:bg-[#EF4444]/10 rounded-lg"
+                      >
                         <Trash2 size={16} />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-[#9CA3AF] hover:text-white hover:bg-white/5 rounded-lg">
-                        <MoreVertical size={16} />
                       </Button>
                     </div>
                   </TableCell>

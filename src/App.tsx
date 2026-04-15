@@ -11,6 +11,8 @@ import Infrastructure from "./pages/public/Infrastructure.tsx";
 import HallOfFame from "./pages/public/HallOfFame.tsx";
 import Sponsors from "./pages/public/Sponsors.tsx";
 import Contact from "./pages/public/Contact.tsx";
+import MatchCenter from "./pages/public/MatchCenter.tsx";
+import NewsCenter from "./pages/public/NewsCenter.tsx";
 import Dashboard from "./pages/admin/Dashboard.tsx";
 import PlayerManagement from "./pages/admin/PlayerManagement.tsx";
 import ClubManagement from "./pages/admin/ClubManagement.tsx";
@@ -41,49 +43,62 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/information" element={<Information />} />
-          <Route path="/infrastructure" element={<Infrastructure />} />
-          <Route path="/hall-of-fame" element={<HallOfFame />} />
-          <Route path="/sponsors" element={<Sponsors />} />
-          <Route path="/contact" element={<Contact />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminRoute><Dashboard /></AdminRoute>} />
-          <Route path="/admin/players" element={<AdminRoute><PlayerManagement /></AdminRoute>} />
-          <Route path="/admin/clubs" element={<AdminRoute><ClubManagement /></AdminRoute>} />
-          <Route path="/admin/matches" element={<AdminRoute><MatchManagement /></AdminRoute>} />
-          <Route path="/admin/match-control" element={<AdminRoute><MatchController /></AdminRoute>} />
-          <Route path="/admin/match-control/:id" element={<AdminRoute><MatchController /></AdminRoute>} />
-          <Route path="/admin/users" element={<AdminRoute><UserAccess /></AdminRoute>} />
-          <Route path="/admin/leagues" element={<AdminRoute><LeagueManagement /></AdminRoute>} />
-          <Route path="/admin/news" element={<AdminRoute><NewsContent /></AdminRoute>} />
-          <Route path="/admin/selections" element={<AdminRoute><SelectionProcess /></AdminRoute>} />
-          <Route path="/admin/billing" element={<AdminRoute><Billing /></AdminRoute>} />
-          <Route path="/admin/gallery" element={<AdminRoute><GalleryAdmin /></AdminRoute>} />
-          <Route path="/admin/reports" element={<AdminRoute><Reports /></AdminRoute>} />
-          <Route path="/admin/settings" element={<AdminRoute><Settings /></AdminRoute>} />
-          <Route path="/admin/events" element={<AdminRoute><EventsManager /></AdminRoute>} />
-          <Route path="/admin/broadcast" element={<AdminRoute><BroadcastCenter /></AdminRoute>} />
-          <Route path="/admin/page-editor" element={<AdminRoute><PageEditor /></AdminRoute>} />
-          <Route path="/admin/sponsors" element={<AdminRoute><SponsorManager /></AdminRoute>} />
-          <Route path="/admin/videos" element={<AdminRoute><VideoManager /></AdminRoute>} />
+import { useSocket } from "@/hooks/useSocket";
 
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const SocketManager = ({ children }: { children: React.ReactNode }) => {
+  useSocket();
+  return <>{children}</>;
+};
+
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SocketManager>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/information" element={<Information />} />
+              <Route path="/infrastructure" element={<Infrastructure />} />
+              <Route path="/hall-of-fame" element={<HallOfFame />} />
+              <Route path="/sponsors" element={<Sponsors />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/match-center" element={<MatchCenter />} />
+              <Route path="/news" element={<NewsCenter />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminRoute><Dashboard /></AdminRoute>} />
+              <Route path="/admin/players" element={<AdminRoute><PlayerManagement /></AdminRoute>} />
+              <Route path="/admin/clubs" element={<AdminRoute><ClubManagement /></AdminRoute>} />
+              <Route path="/admin/matches" element={<AdminRoute><MatchManagement /></AdminRoute>} />
+              <Route path="/admin/match-control" element={<AdminRoute><MatchController /></AdminRoute>} />
+              <Route path="/admin/match-control/:id" element={<AdminRoute><MatchController /></AdminRoute>} />
+              <Route path="/admin/users" element={<AdminRoute><UserAccess /></AdminRoute>} />
+              <Route path="/admin/leagues" element={<AdminRoute><LeagueManagement /></AdminRoute>} />
+              <Route path="/admin/news" element={<AdminRoute><NewsContent /></AdminRoute>} />
+              <Route path="/admin/selections" element={<AdminRoute><SelectionProcess /></AdminRoute>} />
+              <Route path="/admin/billing" element={<AdminRoute><Billing /></AdminRoute>} />
+              <Route path="/admin/gallery" element={<AdminRoute><GalleryAdmin /></AdminRoute>} />
+              <Route path="/admin/reports" element={<AdminRoute><Reports /></AdminRoute>} />
+              <Route path="/admin/settings" element={<AdminRoute><Settings /></AdminRoute>} />
+              <Route path="/admin/events" element={<AdminRoute><EventsManager /></AdminRoute>} />
+              <Route path="/admin/broadcast" element={<AdminRoute><BroadcastCenter /></AdminRoute>} />
+              <Route path="/admin/page-editor" element={<AdminRoute><PageEditor /></AdminRoute>} />
+              <Route path="/admin/sponsors" element={<AdminRoute><SponsorManager /></AdminRoute>} />
+              <Route path="/admin/videos" element={<AdminRoute><VideoManager /></AdminRoute>} />
+
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </SocketManager>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

@@ -1,11 +1,6 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-
-const stats = [
-  { value: 45, suffix: "+", label: "Registered Clubs" },
-  { value: 2500, suffix: "+", label: "Active Players" },
-  { value: 1200, suffix: "+", label: "Matches / Season" },
-  { value: 15, suffix: "+", label: "Tournaments" },
-];
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { dashboardApi } from "@/lib/api";
 
 const AnimatedCounter = ({ target, suffix, visible }: { target: number; suffix: string; visible: boolean }) => {
   const [count, setCount] = useState(0);
@@ -27,8 +22,7 @@ const AnimatedCounter = ({ target, suffix, visible }: { target: number; suffix: 
     return () => clearInterval(timer);
   }, [visible, target]);
 
-  const formatted = target >= 1000 ? `${(count / 1000).toFixed(count >= target ? 0 : 1).replace(/\.0$/, "")},${String(count % 1000).padStart(3, "0").replace(/0+$/, "") || "000"}` : String(count);
-  const display = count >= target ? (target >= 1000 ? target.toLocaleString() : String(target)) : String(count);
+  const display = count >= target ? (target >= 1000 ? target.toLocaleString() : String(target)) : String(Math.floor(count));
 
   return (
     <span>{display}{suffix}</span>
@@ -38,6 +32,21 @@ const AnimatedCounter = ({ target, suffix, visible }: { target: number; suffix: 
 const StatsSection = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+
+  const { data: statsData } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      const resp = await dashboardApi.getStats();
+      return resp.data;
+    }
+  });
+
+  const stats = [
+    { value: statsData?.clubs || 0, suffix: "+", label: "Registered Clubs" },
+    { value: statsData?.players || 0, suffix: "+", label: "Active Players" },
+    { value: statsData?.matches || 0, suffix: "+", label: "Matches / Season" },
+    { value: statsData?.leagues || 0, suffix: "+", label: "Tournaments" },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(

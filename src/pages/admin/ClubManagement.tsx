@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { clubApi } from "@/lib/api";
 import { AddClubDialog } from "@/components/admin/AddClubDialog";
+import { ManageClubDialog } from "@/components/admin/ManageClubDialog";
 
 const ClubManagement = () => {
   const { data: clubs, isLoading } = useQuery({
@@ -77,17 +78,15 @@ const ClubManagement = () => {
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-tighter text-[#9CA3AF] mb-1">Status</p>
-                  <p className="text-sm font-bold text-white font-sans">Active</p>
+                  <p className="text-sm font-bold text-white font-sans">{club.status}</p>
                 </div>
               </div>
 
               <div className="mt-6 flex justify-between items-center">
-                <Badge variant="outline" className="border-0 uppercase text-[10px] font-black tracking-widest h-7 px-3 bg-emerald-500/10 text-emerald-400">
-                  Verified
+                <Badge variant="outline" className={`border-0 uppercase text-[10px] font-black tracking-widest h-7 px-3 ${club.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400' : club.status === 'SUSPENDED' ? 'bg-red-500/10 text-red-500' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                  {club.status === 'ACTIVE' ? 'Verified' : club.status}
                 </Badge>
-                <Button variant="outline" className="border-[#1F2937] bg-transparent text-[#9CA3AF] hover:text-white hover:bg-white/5 uppercase text-[10px] font-black tracking-widest h-8">
-                  Manage Academy
-                </Button>
+                <ManageClubDialog club={club} />
               </div>
             </CardContent>
           </Card>

@@ -37,7 +37,7 @@ router.post('/', async (req: Request, res: Response) => {
 // Update sponsor
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { name, tier, logoUrl, industry, active } = req.body;
     const sponsor = await prisma.sponsor.update({
       where: { id },
@@ -52,7 +52,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 // Delete sponsor
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     await prisma.sponsor.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {

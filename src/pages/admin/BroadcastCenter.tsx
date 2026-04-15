@@ -12,10 +12,15 @@ import {
   Clock, 
   Target,
   History,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { broadcastApi } from "@/lib/api";
+import { toast } from "sonner";
 
 const logs = [
   { id: 1, title: "Trial Selection List Published", sentTo: "All Players", method: "Push + Email", time: "1 hour ago", status: "Delivered" },
@@ -24,6 +29,30 @@ const logs = [
 ];
 
 const BroadcastCenter = () => {
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [target, setTarget] = useState("All Users");
+
+  const mutation = useMutation({
+    mutationFn: (data: any) => broadcastApi.send(data),
+    onSuccess: () => {
+      toast.success("Broadcast sent successfully!");
+      setTitle("");
+      setMessage("");
+    },
+    onError: () => {
+      toast.error("Failed to deploy broadcast.");
+    }
+  });
+
+  const handleSend = () => {
+    if (!title || !message) {
+      toast.error("Title and message are required.");
+      return;
+    }
+    mutation.mutate({ title, message, target });
+  };
+
   return (
     <AdminLayout>
       <div className="mb-8">
@@ -48,8 +77,14 @@ const BroadcastCenter = () => {
                    <div className="space-y-4">
                       <p className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Target Audience</p>
                       <div className="grid grid-cols-2 gap-3">
-                         {["All Users", "Players Only", "Clubs Only", "Trial Candidates"].map(target => (
-                           <button key={target} className="h-12 rounded-xl bg-[#0B1220] border border-[#1F2937] text-[10px] font-black uppercase hover:border-[#FACC15] transition-all text-white">{target}</button>
+                         {["All Users", "Players Only", "Clubs Only", "Trial Candidates"].map(t => (
+                           <button 
+                             key={t} 
+                             onClick={() => setTarget(t)}
+                             className={`h-12 rounded-xl border text-[10px] font-black uppercase hover:border-[#FACC15] transition-all ${target === t ? 'bg-[#FACC15] text-[#0B1220] border-transparent' : 'bg-[#0B1220] text-white border-[#1F2937]'}`}
+                           >
+                             {t}
+                           </button>
                          ))}
                       </div>
                    </div>
@@ -64,12 +99,22 @@ const BroadcastCenter = () => {
 
                 <div className="space-y-2">
                    <label className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Broadcast Title</label>
-                   <Input placeholder="Enter high-level title..." className="bg-[#0B1220] border-[#1F2937] text-sm h-12" />
+                   <Input 
+                     value={title}
+                     onChange={(e) => setTitle(e.target.value)}
+                     placeholder="Enter high-level title..." 
+                     className="bg-[#0B1220] border-[#1F2937] text-sm h-12 text-white" 
+                   />
                 </div>
 
                 <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-[#9CA3AF]">Message Content (Short & Impactful)</label>
-                    <Textarea placeholder="Type your message here (max 160 chars for push)..." className="bg-[#0B1220] border-[#1F2937] min-h-[120px]" />
+                    <Textarea 
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Type your message here (max 160 chars for push)..." 
+                      className="bg-[#0B1220] border-[#1F2937] min-h-[120px] text-white" 
+                    />
                 </div>
 
                 <div className="flex justify-between items-center pt-4 border-t border-[#1F2937]">
@@ -77,8 +122,12 @@ const BroadcastCenter = () => {
                       <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                       <span className="text-[10px] font-black uppercase tracking-widest">FCM Gateway Online</span>
                    </div>
-                   <Button className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-[0.2em] text-xs px-10 h-14 rounded-2xl shadow-[0_10px_40px_rgba(250,204,21,0.2)]">
-                      <Send size={18} className="mr-2" />
+                   <Button 
+                     onClick={handleSend}
+                     disabled={mutation.isPending}
+                     className="bg-[#FACC15] hover:bg-[#FACC15]/90 text-[#0B1220] font-black uppercase tracking-[0.2em] text-xs px-10 h-14 rounded-2xl shadow-[0_10px_40px_rgba(250,204,21,0.2)]"
+                   >
+                      {mutation.isPending ? <Loader2 className="animate-spin mr-2" /> : <Send size={18} className="mr-2" />}
                       Deploy Now
                    </Button>
                 </div>

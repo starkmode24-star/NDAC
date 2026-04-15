@@ -1,6 +1,8 @@
 import PublicLayout from "@/components/PublicLayout";
 import { MapPin, Users, Zap, ShieldCheck, Camera, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { galleryApi } from "@/lib/api";
 
 const stands = [
   { name: "Pavilion End Stand", capacity: "4,500", features: "VIP Lounges, Player Dugouts" },
@@ -16,6 +18,23 @@ const highlights = [
 ];
 
 const Infrastructure = () => {
+  const { data: galleryItems } = useQuery({
+    queryKey: ['gallery'],
+    queryFn: async () => {
+      const resp = await galleryApi.getAll();
+      return resp.data;
+    }
+  });
+
+  const displayImages = galleryItems && galleryItems.length >= 4 
+    ? galleryItems.slice(0, 4) 
+    : [
+        { imageUrl: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80", title: "Night Match Floodlights" },
+        { imageUrl: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80", title: "International Pitch" },
+        { imageUrl: "https://images.unsplash.com/photo-1562077772-3bd90403f7f0?w=800&q=80", title: "High-Tech Nets" },
+        { imageUrl: "/vip-pavilion.png", title: "VIP Pavilion End" },
+      ];
+
   return (
     <PublicLayout>
       {/* Immersive Stadium Hero */}
@@ -107,29 +126,29 @@ const Infrastructure = () => {
               <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-4">
                     <div className="aspect-[4/5] rounded-[2rem] overflow-hidden group relative">
-                       <img src="https://images.unsplash.com/photo-1540741282455-c3e079d7a206?q=80&w=2070" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stadium Night" />
+                       <img src={displayImages[0]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stadium" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
-                          <p className="text-white font-black uppercase text-xs">Night Match Floodlights</p>
+                          <p className="text-white font-black uppercase text-xs">{displayImages[0]?.title}</p>
                        </div>
                     </div>
                     <div className="aspect-square rounded-[2rem] overflow-hidden group relative">
-                       <img src="https://images.unsplash.com/photo-1593341646782-e0b495cff86d?q=80&w=1974" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Pitch" />
+                       <img src={displayImages[1]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Pitch" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
-                          <p className="text-white font-black uppercase text-xs">International Pitch</p>
+                          <p className="text-white font-black uppercase text-xs">{displayImages[1]?.title}</p>
                        </div>
                     </div>
                  </div>
                  <div className="space-y-4 pt-12">
                     <div className="aspect-square rounded-[2rem] overflow-hidden group relative">
-                       <img src="https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=2071" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Nets" />
+                       <img src={displayImages[2]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Nets" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
-                          <p className="text-white font-black uppercase text-xs">High-Tech Nets</p>
+                          <p className="text-white font-black uppercase text-xs">{displayImages[2]?.title}</p>
                        </div>
                     </div>
                     <div className="aspect-[4/5] rounded-[2rem] overflow-hidden group relative">
-                       <img src="https://images.unsplash.com/photo-1512716676301-88c5daa6912b?q=80&w=1934" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stands" />
+                       <img src={displayImages[3]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stands" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
-                          <p className="text-white font-black uppercase text-xs">VIP Pavilion End</p>
+                          <p className="text-white font-black uppercase text-xs">{displayImages[3]?.title}</p>
                        </div>
                     </div>
                  </div>
