@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -20,7 +19,7 @@ import trialRoutes from './routes/trials';
 import sponsorRoutes from './routes/sponsors';
 import broadcastRoutes from './routes/broadcast';
 
-export const prisma = new PrismaClient();
+import { prisma } from './lib/prisma';
 const app = express();
 const httpServer = createServer(app);
 

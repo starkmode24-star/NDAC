@@ -30,6 +30,7 @@ export const useSocket = () => {
       socket.off('connect');
       socket.off('scoreUpdate');
       socket.off('ballUpdate');
+      disconnectSocket();
     };
   }, [queryClient]);
 };

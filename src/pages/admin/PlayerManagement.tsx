@@ -42,9 +42,9 @@ const PlayerManagement = () => {
   const queryClient = useQueryClient();
 
   const { data: players, isLoading } = useQuery({
-    queryKey: ['players'],
+    queryKey: ['players', searchTerm],
     queryFn: async () => {
-      const resp = await playerApi.getAll();
+      const resp = await playerApi.getAll(searchTerm ? { search: searchTerm } : undefined);
       return resp.data;
     }
   });
@@ -64,6 +64,26 @@ const PlayerManagement = () => {
       toast.success("Player data removed.");
     }
   });
+
+  const handleExportCSV = () => {
+    if (!players || players.length === 0) {
+      toast.error("No players to export");
+      return;
+    }
+    const headers = ["ID", "Name", "Club", "Specialty", "Status", "DOB"];
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n"
+      + players.map((p: any) => `${p.id},${p.firstName} ${p.lastName},${p.club?.name || 'Unassigned'},${p.specialty || 'General'},${p.status},${new Date(p.dob).toLocaleDateString()}`).join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "ndca_players.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Player database exported!");
+  };
 
   if (isLoading && !searchTerm) {
     return (
@@ -104,7 +124,7 @@ const PlayerManagement = () => {
                 <Filter size={14} className="mr-2" />
                 Filter
               </Button>
-              <Button variant="outline" className="border-[#1F2937] bg-[#0B1220] text-[#9CA3AF] hover:text-white uppercase text-[10px] font-black h-10 px-4">
+              <Button onClick={handleExportCSV} variant="outline" className="border-[#1F2937] bg-[#0B1220] text-[#9CA3AF] hover:text-white uppercase text-[10px] font-black h-10 px-4">
                 Export CSV
               </Button>
             </div>
@@ -128,11 +148,16 @@ const PlayerManagement = () => {
                     <div className="flex items-center gap-4">
                       <Avatar className="h-10 w-10 border border-[#FACC15]/20 group-hover:border-[#FACC15]/50 transition-colors">
                         <AvatarImage src="" />
-                        <AvatarFallback className="bg-[#0B1220] text-[#FACC15] font-bold text-xs">{player.firstName[0]}{player.lastName[0]}</AvatarFallback>
+                        <AvatarFallback className="bg-[#0B1220] text-[#FACC15] font-bold text-xs">
+                          {(player.firstName?.[0] || 'U')}
+                          {(player.lastName?.[0] || '')}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-bold text-white font-sans">{player.firstName} {player.lastName}</p>
-                        <p className="text-[10px] text-[#9CA3AF] uppercase font-bold tracking-widest">ID: NDCA-2025-{player.id.toString().slice(-3)}</p>
+                        <p className="text-sm font-bold text-white font-sans">{player.firstName || 'Unknown'} {player.lastName || ''}</p>
+                        <p className="text-[10px] text-[#9CA3AF] uppercase font-bold tracking-widest">
+                          ID: NDCA-2025-{player.id?.toString().slice(-3) || 'XXX'}
+                        </p>
                       </div>
                     </div>
                   </TableCell>

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { prisma, io } from '../index';
+import { prisma } from '../lib/prisma';
+import { io } from '../index';
 
 export const matchController = {
   create: async (req: Request, res: Response) => {

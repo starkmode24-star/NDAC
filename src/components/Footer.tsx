@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
 const footerLinks = {
-  Product: ["Live Scores", "Highlights", "Analytics", "Mobile App"],
-  Company: ["About Us", "Careers", "Press", "Contact"],
-  Legal: ["Privacy", "Terms", "Cookie Policy"],
+  Cricket: ["Match Center", "Leagues", "Events", "News"],
+  Heritage: ["Hall of Fame", "Champions", "Star Attractions", "About Us"],
+  Support: ["Contact", "Privacy", "Terms", "Sponsorship"],
 };
 
 const Footer = () => {

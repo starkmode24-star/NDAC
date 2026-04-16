@@ -35,6 +35,8 @@ export const clubApi = {
   getAll: () => api.get('/clubs'),
   getById: (id: string) => api.get(`/clubs/${id}`),
   create: (data: any) => api.post('/clubs', data),
+  update: (id: string, data: any) => api.put(`/clubs/${id}`, data),
+  delete: (id: string) => api.delete(`/clubs/${id}`),
 };
 
 export const matchApi = {

@@ -7,7 +7,7 @@ import customLogo from "@/assets/logo.jpg";
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [showInfoDropdown, setShowInfoDropdown] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -20,6 +20,7 @@ const Navbar = () => {
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
     { label: "Matches", path: "/match-center" },
+    { label: "Events", path: "/events" },
     { label: "News", path: "/news" },
     { 
       label: "Association", 
@@ -32,7 +33,15 @@ const Navbar = () => {
       ]
     },
     { label: "Stadium", path: "/infrastructure" },
-    { label: "Honors", path: "/hall-of-fame" },
+    { 
+      label: "Heritage", 
+      path: "/hall-of-fame",
+      dropdown: [
+        { label: "Hall of Fame", path: "/hall-of-fame" },
+        { label: "Champions", path: "/champions" },
+        { label: "Star Attractions", path: "/stars" },
+      ]
+    },
     { label: "Sponsors", path: "/sponsors" },
     { label: "Contact", path: "/contact" },
   ];
@@ -56,20 +65,20 @@ const Navbar = () => {
             <div 
               key={item.label} 
               className="relative group h-16 flex items-center"
-              onMouseEnter={() => item.dropdown && setShowInfoDropdown(true)}
-              onMouseLeave={() => item.dropdown && setShowInfoDropdown(false)}
+              onMouseEnter={() => setHoveredItem(item.label)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Link
                 to={item.path}
                 className="text-[10px] font-black text-foreground/70 hover:text-primary transition-colors duration-200 uppercase tracking-[0.2em] flex items-center gap-1"
               >
                 {item.label}
-                {item.dropdown && <ChevronDown size={10} className={`transition-transform duration-300 ${showInfoDropdown ? 'rotate-180' : ''}`} />}
+                {item.dropdown && <ChevronDown size={10} className={`transition-transform duration-300 ${hoveredItem === item.label ? 'rotate-180' : ''}`} />}
               </Link>
 
               {item.dropdown && (
                 <div className={`absolute top-full left-0 w-48 glass-strong border border-border/20 rounded-xl py-4 flex flex-col gap-1 transition-all duration-300 origin-top shadow-2xl ${
-                  showInfoDropdown ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+                  hoveredItem === item.label ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
                 }`}>
                   {item.dropdown.map((sub) => (
                     <Link

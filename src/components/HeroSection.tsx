@@ -108,19 +108,19 @@ const HeroSection = () => {
 
       {/* Player */}
       <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/3 z-10 pointer-events-none"
+        className="absolute bottom-0 left-1/2 -translate-x-1/4 z-10 pointer-events-none"
         style={{
           opacity: stage >= 8 ? 1 : 0,
           transform: stage >= 8
-            ? "translateX(-33%) scale(1) translateY(0)"
-            : "translateX(-33%) scale(0.85) translateY(60px)",
+            ? "translateX(-25%) scale(1.1) translateY(0)"
+            : "translateX(-25%) scale(0.9) translateY(60px)",
           transition: "all 1.4s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         <img
           src={playerImg}
           alt="Cricket player"
-          className="h-[78vh] max-h-[780px] object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.5)]"
+          className="h-[85vh] max-h-[850px] object-contain drop-shadow-[0_0_40px_rgba(0,0,0,0.5)]"
           width={800}
           height={1200}
         />

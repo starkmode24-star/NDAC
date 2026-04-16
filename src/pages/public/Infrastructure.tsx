@@ -29,10 +29,10 @@ const Infrastructure = () => {
   const displayImages = galleryItems && galleryItems.length >= 4 
     ? galleryItems.slice(0, 4) 
     : [
-        { imageUrl: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80", title: "Night Match Floodlights" },
-        { imageUrl: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80", title: "International Pitch" },
-        { imageUrl: "https://images.unsplash.com/photo-1562077772-3bd90403f7f0?w=800&q=80", title: "High-Tech Nets" },
-        { imageUrl: "/vip-pavilion.png", title: "VIP Pavilion End" },
+        { url: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80", title: "Night Match Floodlights" },
+        { url: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80", title: "International Pitch" },
+        { url: "https://images.unsplash.com/photo-1562077772-3bd90403f7f0?w=800&q=80", title: "High-Tech Nets" },
+        { url: "/vip-pavilion.png", title: "VIP Pavilion End" },
       ];
 
   return (
@@ -124,15 +124,15 @@ const Infrastructure = () => {
 
               {/* Facility Gallery */}
               <div className="grid grid-cols-2 gap-4">
-                 <div className="space-y-4">
+                  <div className="space-y-4">
                     <div className="aspect-[4/5] rounded-[2rem] overflow-hidden group relative">
-                       <img src={displayImages[0]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stadium" />
+                       <img src={displayImages[0]?.url || displayImages[0]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stadium" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
                           <p className="text-white font-black uppercase text-xs">{displayImages[0]?.title}</p>
                        </div>
                     </div>
                     <div className="aspect-square rounded-[2rem] overflow-hidden group relative">
-                       <img src={displayImages[1]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Pitch" />
+                       <img src={displayImages[1]?.url || displayImages[1]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Pitch" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
                           <p className="text-white font-black uppercase text-xs">{displayImages[1]?.title}</p>
                        </div>
@@ -140,13 +140,13 @@ const Infrastructure = () => {
                  </div>
                  <div className="space-y-4 pt-12">
                     <div className="aspect-square rounded-[2rem] overflow-hidden group relative">
-                       <img src={displayImages[2]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Nets" />
+                       <img src={displayImages[2]?.url || displayImages[2]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Nets" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
                           <p className="text-white font-black uppercase text-xs">{displayImages[2]?.title}</p>
                        </div>
                     </div>
                     <div className="aspect-[4/5] rounded-[2rem] overflow-hidden group relative">
-                       <img src={displayImages[3]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stands" />
+                       <img src={displayImages[3]?.url || displayImages[3]?.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Stands" />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
                           <p className="text-white font-black uppercase text-xs">{displayImages[3]?.title}</p>
                        </div>

@@ -13,6 +13,9 @@ import Sponsors from "./pages/public/Sponsors.tsx";
 import Contact from "./pages/public/Contact.tsx";
 import MatchCenter from "./pages/public/MatchCenter.tsx";
 import NewsCenter from "./pages/public/NewsCenter.tsx";
+import Events from "./pages/public/Events.tsx";
+import Champions from "./pages/public/Champions.tsx";
+import StarAttraction from "./pages/public/StarAttraction.tsx";
 import Dashboard from "./pages/admin/Dashboard.tsx";
 import PlayerManagement from "./pages/admin/PlayerManagement.tsx";
 import ClubManagement from "./pages/admin/ClubManagement.tsx";
@@ -69,6 +72,9 @@ const App = () => {
               <Route path="/contact" element={<Contact />} />
               <Route path="/match-center" element={<MatchCenter />} />
               <Route path="/news" element={<NewsCenter />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/champions" element={<Champions />} />
+              <Route path="/stars" element={<StarAttraction />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminRoute><Dashboard /></AdminRoute>} />
