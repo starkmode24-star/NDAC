@@ -19,7 +19,7 @@ import trialRoutes from './routes/trials';
 import sponsorRoutes from './routes/sponsors';
 import broadcastRoutes from './routes/broadcast';
 
-import { prisma } from './lib/prisma';
+export { prisma } from './lib/prisma';
 const app = express();
 const httpServer = createServer(app);
 
