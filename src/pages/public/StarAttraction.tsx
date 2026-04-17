@@ -34,10 +34,6 @@ import { useQuery } from "@tanstack/react-query";
 import { playerApi } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 
-const staticStars = [
-  ... existing stars ...
-];
-
 const StarAttraction = () => {
   const { data: featuredPlayers, isLoading } = useQuery({
     queryKey: ['featured-players'],
@@ -56,24 +52,8 @@ const StarAttraction = () => {
         image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80", // Need a real imageUrl field if available
         stats: { matches: 25, wickets: 45, avg: 19.5 } // Placeholder stats
       }))
-    : [
-        {
-          name: "Arjun Kulkarni",
-          role: "Right Arm Fast",
-          achievement: "Took 7 Wickets in 2024 Final",
-          bio: "Arjun has been the backbone of Nashik's pace attack for 3 years. His ability to swing the ball at over 140kmph makes him a constant threat.",
-          image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80",
-          stats: { matches: 45, wickets: 124, avg: 18.2 }
-        },
-        {
-          name: "Sameer Deshpande",
-          role: "Opening Batter",
-          achievement: "Highest Scorer (Season 2024)",
-          bio: "A technically sound batter with a wide range of strokes. Sameer holds the record for the highest individual score in the Nashik Premier League.",
-          image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80",
-          stats: { matches: 38, runs: 2450, avg: 52.4 }
-        }
-      ];
+    : stars;
+
 
   return (
     <PublicLayout>
