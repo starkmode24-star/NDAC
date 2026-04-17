@@ -10,14 +10,18 @@ export const clubController = {
 
       // If user provided adminEmail and adminPassword from the UI
       if (adminEmail && adminPassword) {
-        const hashedPassword = await bcrypt.hash(adminPassword, 10);
-        const user = await prisma.user.create({
-          data: {
-            email: adminEmail,
-            password: hashedPassword,
-            role: 'CLUB_ADMIN'
-          }
-        });
+        let user = await prisma.user.findUnique({ where: { email: adminEmail } });
+        
+        if (!user) {
+          const hashedPassword = await bcrypt.hash(adminPassword, 10);
+          user = await prisma.user.create({
+            data: {
+              email: adminEmail,
+              password: hashedPassword,
+              role: 'CLUB_ADMIN'
+            }
+          });
+        }
         adminId = user.id;
       }
 

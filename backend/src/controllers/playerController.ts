@@ -98,14 +98,27 @@ export const playerController = {
   approve: async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const { status } = req.body; // APPROVED or REJECTED
+      const status = req.body?.status || 'APPROVED';
       const player = await prisma.player.update({
         where: { id: String(id) },
         data: { status }
       });
       res.json(player);
     } catch (error) {
+      console.error('Approval error:', error);
       res.status(500).json({ error: 'Failed to update player status' });
+    }
+  },
+
+  getFeatured: async (req: Request, res: Response) => {
+    try {
+      const players = await prisma.player.findMany({
+        where: { isFeatured: true, status: 'APPROVED' },
+        include: { club: true }
+      });
+      res.json(players);
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch featured players' });
     }
   }
 };

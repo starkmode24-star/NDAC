@@ -75,13 +75,21 @@ router.get('/stats', async (req: Request, res: Response) => {
       { name: 'Sun', score: 3490 },
     ];
 
+    const totalLeagues = await prisma.league.count();
+    const totalMatches = await prisma.match.count();
+
     res.json({
       totalPlayers,
       activeClubs,
       matchesToday,
       pendingApprovals,
       recentActivity: recentActivity.slice(0, 5),
-      trafficData
+      trafficData,
+      // Keys expected by the frontend StatsSection
+      players: totalPlayers,
+      clubs: activeClubs,
+      matches: totalMatches,
+      leagues: totalLeagues
     });
 
   } catch (error) {

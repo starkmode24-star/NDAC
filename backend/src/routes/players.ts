@@ -5,6 +5,9 @@ import { authorize } from '../middleware/authorize';
 
 const router = Router();
 
+// Public access
+router.get('/featured', playerController.getFeatured);
+
 // Public/Authenticated access to list and get players
 router.get('/', authenticate, playerController.getAll);
 router.get('/:id', authenticate, playerController.getById);

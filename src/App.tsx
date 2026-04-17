@@ -53,6 +53,8 @@ const SocketManager = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+import { SystemAlertOverlay } from "@/components/SystemAlertOverlay";
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -60,8 +62,10 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <SystemAlertOverlay />
           <BrowserRouter>
             <Routes>
+
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/about" element={<AboutUs />} />

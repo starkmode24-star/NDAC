@@ -54,6 +54,10 @@ model Player {
   status      String   @default("PENDING")
   documents   String?  
   
+  bio         String?  
+  isFeatured  Boolean  @default(false)
+  achievement String?
+
   selections  TrialRegistration[]
 
   createdAt   DateTime @default(now())

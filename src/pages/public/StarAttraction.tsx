@@ -30,7 +30,51 @@ const stars = [
   }
 ];
 
+import { useQuery } from "@tanstack/react-query";
+import { playerApi } from "@/lib/api";
+import { Loader2 } from "lucide-react";
+
+const staticStars = [
+  ... existing stars ...
+];
+
 const StarAttraction = () => {
+  const { data: featuredPlayers, isLoading } = useQuery({
+    queryKey: ['featured-players'],
+    queryFn: async () => {
+      const resp = await playerApi.getFeatured();
+      return resp.data;
+    }
+  });
+
+  const displayStars = featuredPlayers && featuredPlayers.length > 0 
+    ? featuredPlayers.map((p: any) => ({
+        name: `${p.firstName} ${p.lastName}`,
+        role: p.specialty || "Player",
+        achievement: p.achievement || "NDCA Representative",
+        bio: p.bio || "A dedicated athlete making waves in Nashik's cricketing circles.",
+        image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80", // Need a real imageUrl field if available
+        stats: { matches: 25, wickets: 45, avg: 19.5 } // Placeholder stats
+      }))
+    : [
+        {
+          name: "Arjun Kulkarni",
+          role: "Right Arm Fast",
+          achievement: "Took 7 Wickets in 2024 Final",
+          bio: "Arjun has been the backbone of Nashik's pace attack for 3 years. His ability to swing the ball at over 140kmph makes him a constant threat.",
+          image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80",
+          stats: { matches: 45, wickets: 124, avg: 18.2 }
+        },
+        {
+          name: "Sameer Deshpande",
+          role: "Opening Batter",
+          achievement: "Highest Scorer (Season 2024)",
+          bio: "A technically sound batter with a wide range of strokes. Sameer holds the record for the highest individual score in the Nashik Premier League.",
+          image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80",
+          stats: { matches: 38, runs: 2450, avg: 52.4 }
+        }
+      ];
+
   return (
     <PublicLayout>
       <section className="py-24 bg-background overflow-hidden">
@@ -48,54 +92,54 @@ const StarAttraction = () => {
             </p>
           </div>
 
-          <div className="space-y-40">
-             {stars.map((star, i) => (
-                <div key={star.name} className={`flex flex-col lg:flex-row gap-20 items-center ${i % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}>
-                   {/* Visual side */}
-                   <div className="flex-1 relative group w-full lg:w-auto">
-                      <div className="absolute inset-0 bg-primary/20 rounded-[4rem] rotate-3 group-hover:rotate-6 transition-transform duration-500" />
-                      <div className="relative aspect-[3/4] rounded-[4rem] overflow-hidden border border-border shadow-2xl">
-                         <img src={star.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" alt={star.name} />
-                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
-                         <div className="absolute bottom-12 left-12 right-12 flex justify-between items-center text-white">
-                            <div className="flex gap-4">
-                               <div className="p-3 rounded-full bg-white/10 backdrop-blur border border-white/20 hover:bg-primary hover:text-black hover:border-primary transition-all cursor-pointer"><Camera size={18} /></div>
-                               <div className="p-3 rounded-full bg-white/10 backdrop-blur border border-white/20 hover:bg-primary hover:text-black hover:border-primary transition-all cursor-pointer"><Play size={18} /></div>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
+          {isLoading ? (
+            <div className="flex justify-center py-40">
+              <Loader2 className="animate-spin text-primary" size={48} />
+            </div>
+          ) : (
+            <div className="space-y-40">
+              {displayStars.map((star: any, i: number) => (
+                  <div key={star.name} className={`flex flex-col lg:flex-row gap-20 items-center ${i % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}>
+                    {/* Visual side */}
+                    <div className="flex-1 relative group w-full lg:w-auto">
+                        <div className="absolute inset-0 bg-primary/20 rounded-[4rem] border-2 border-primary/20 rotate-3 group-hover:rotate-6 transition-transform duration-500" />
+                        <div className="relative aspect-[3/4] rounded-[4rem] overflow-hidden border border-border shadow-2xl">
+                          <img src={star.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" alt={star.name} />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+                        </div>
+                    </div>
 
-                   {/* Info side */}
-                   <div className="flex-1 space-y-8 text-center lg:text-left">
-                      <div className="space-y-4">
-                         <Badge className="bg-primary/10 text-primary border-primary/30 font-black uppercase tracking-widest px-4 py-1.5 rounded-full">{star.role}</Badge>
-                         <h2 className="text-5xl md:text-7xl font-display font-black text-foreground uppercase tracking-tighter italic">{star.name}</h2>
-                         <div className="flex items-center gap-3 text-primary font-black uppercase text-xs tracking-widest justify-center lg:justify-start">
-                            <Zap size={18} />
-                            {star.achievement}
-                         </div>
-                      </div>
+                    {/* Info side */}
+                    <div className="flex-1 space-y-8 text-center lg:text-left">
+                        <div className="space-y-4">
+                          <Badge className="bg-primary/10 text-primary border-primary/30 font-black uppercase tracking-widest px-4 py-1.5 rounded-full">{star.role}</Badge>
+                          <h2 className="text-5xl md:text-7xl font-display font-black text-foreground uppercase tracking-tighter italic">{star.name}</h2>
+                          <div className="flex items-center gap-3 text-primary font-black uppercase text-xs tracking-widest justify-center lg:justify-start">
+                              <Zap size={18} />
+                              {star.achievement}
+                          </div>
+                        </div>
 
-                      <div className="relative p-8 bg-muted/30 rounded-3xl border border-border">
-                         <Quote className="absolute -top-4 -left-4 text-primary opacity-20" size={60} />
-                         <p className="text-muted-foreground text-lg font-sans italic leading-relaxed pt-2">
-                           {star.bio}
-                         </p>
-                      </div>
+                        <div className="relative p-8 bg-muted/30 rounded-3xl border border-border">
+                          <Quote className="absolute -top-4 -left-4 text-primary opacity-20" size={60} />
+                          <p className="text-muted-foreground text-lg font-sans italic leading-relaxed pt-2">
+                            {star.bio}
+                          </p>
+                        </div>
 
-                      <div className="grid grid-cols-3 gap-6 pt-4">
-                         {Object.entries(star.stats).map(([key, val]) => (
-                            <div key={key} className="p-4 rounded-2xl bg-background border border-border text-center">
-                               <p className="text-[10px] font-black uppercase text-muted-foreground mb-1 tracking-widest">{key}</p>
-                               <p className="text-2xl font-display font-black text-foreground">{val}</p>
-                            </div>
-                         ))}
-                      </div>
-                   </div>
-                </div>
-             ))}
-          </div>
+                        <div className="grid grid-cols-3 gap-6 pt-4">
+                          {Object.entries(star.stats).map(([key, val]) => (
+                              <div key={key} className="p-4 rounded-2xl bg-background border border-border text-center">
+                                <p className="text-[10px] font-black uppercase text-muted-foreground mb-1 tracking-widest">{key}</p>
+                                <p className="text-2xl font-display font-black text-foreground">{val}</p>
+                              </div>
+                          ))}
+                        </div>
+                    </div>
+                  </div>
+              ))}
+            </div>
+          )}
 
           <div className="mt-40 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
              {[
@@ -120,5 +164,6 @@ const StarAttraction = () => {
     </PublicLayout>
   );
 };
+
 
 export default StarAttraction;
